@@ -7,8 +7,8 @@ default_width: 30
 persist_url_state: true
 
 view_switcher:
-  enabled: true
-  default_mode: split
+  enabled: false
+  default_mode: instructions
 
 tabs:
   # OCP Console
