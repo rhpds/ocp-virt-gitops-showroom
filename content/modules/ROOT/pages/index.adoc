@@ -28,6 +28,19 @@ export GUID={guid}
 echo $GUID
 ----
 
+== OpenShift CLI access
+
+The Showroom terminal on the right is already authenticated to this cluster.
+Click any command block marked for execution -- you do not need to run `oc login` first.
+
+Verify access:
+
+[source,role="execute"]
+----
+oc whoami
+oc get applications -n openshift-gitops
+----
+
 == Next steps
 
 Start with the xref:01-overview.adoc[Workshop Overview].
