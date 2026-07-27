@@ -16,6 +16,8 @@ tabs:
     path: /terminal/
     port: 443
 
-  # OCP Console
+  # OpenShift Console cannot be iframed (X-Frame-Options: DENY).
+  # Open in a new browser tab instead of embedding.
   - name: OCP Console
     url: 'https://console-openshift-console.${DOMAIN}'
+    external: true
