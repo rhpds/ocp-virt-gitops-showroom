@@ -1,26 +1,66 @@
 = OpenShift Virtualization GitOps Showroom
 
-Showroom lab guide for the OpenShift Virtualization GitOps workshop, built with https://antora.org[Antora].
+Lab guide for the **OpenShift Virtualization GitOps** workshop, built with https://antora.org[Antora] for the https://demo.redhat.com[Red Hat Demo Platform] Showroom.
 
-Content covers four demos:
+This repository replaces the old Markdown guides from the workshop-app (`demo-guides/`) with AsciiDoc content rendered in Showroom.
 
-* Manual change detection and drift correction
-* VM recovery from data loss
-* Adding a new development VM via Git
-* Multi-environment VM management with Kustomize
+== What this workshop covers
 
-== Quick Start
+GitOps for Virtual Machines on OpenShift Virtualization using OpenShift GitOps (ArgoCD):
 
-. Clone this repository
-. Preview locally:
-+
+* *Demo 1* -- Manual change detection and drift correction
+* *Demo 2* -- VM recovery from data loss
+* *Demo 3* -- Adding a new development VM via Git
+* *Demo 4* -- Multi-environment VM management with Kustomize
+
+Supporting pages: workshop overview, installation details, GitOps promotion workflow, troubleshooting, and cleanup.
+
+== Content layout
+
+[source,text]
+----
+content/
+└── modules/ROOT/
+    ├── antora.yml          # Component descriptor + AsciiDoc attributes
+    ├── nav.adoc            # Left navigation
+    └── pages/
+        ├── index.adoc
+        ├── 01-overview.adoc
+        ├── 02-details.adoc
+        ├── 03-demo-01-manual-change.adoc
+        ├── 04-demo-02-vm-recovery.adoc
+        ├── 05-demo-03-add-development-vm.adoc
+        ├── 06-demo-04-multi-env-management.adoc
+        ├── 07-gitops-workflow.adoc
+        ├── 08-troubleshooting.adoc
+        └── 99-conclusion.adoc
+----
+
+Runtime variables such as `{guid}` are injected as AsciiDoc attributes (see `content/antora.yml`).
+
+== Preview locally
+
 [source,sh]
 ----
-podman run --rm --name antora -v $PWD:/antora -p 8080:8080 -i -t ghcr.io/juliaaano/antora-viewer
+podman run --rm --name antora \
+  -v "$PWD:/antora:z" \
+  -p 8080:8080 \
+  -i -t ghcr.io/juliaaano/antora-viewer
 ----
-+
-On SELinux systems, append `:z` to the volume mount.
 
-. Edit content in `content/modules/ROOT/pages/`
+Open http://localhost:8080
 
-Source workshop guides: https://github.com/anibalcoral/OpenShift-Virtualization-GitOps/tree/main/demo-guides[`demo-guides/` in OpenShift-Virtualization-GitOps]
+Edit files under `content/modules/ROOT/pages/` -- the viewer rebuilds on change.
+
+== Configuration
+
+| File | Purpose |
+|------|---------|
+| `site.yml` | Antora playbook (site title, UI bundle, output) |
+| `ui-config.yml` | Showroom UI tabs (Terminal, OCP Console) |
+| `content/antora.yml` | Component metadata and lab attributes (`guid`, console URL, etc.) |
+
+== Related repositories
+
+* Workshop automation and original Markdown guides: https://github.com/anibalcoral/OpenShift-Virtualization-GitOps[OpenShift-Virtualization-GitOps]
+* Showroom template / docs: https://rhpds.github.io/showroom_template_nookbag/
