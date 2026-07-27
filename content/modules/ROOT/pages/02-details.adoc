@@ -1,0 +1,196 @@
+= Workshop Details
+:source-highlighter: rouge
+
+
+== Prerequisites
+
+* OpenShift cluster with OpenShift Virtualization installed
+* `oc` CLI configured and logged in
+* `ansible-playbook` installed
+* Git repositories configured
+
+== Installation
+
+=== Automated installation
+
+[source,role="execute"]
+----
+./install.sh
+----
+
+What the automated installation does:
+
+. Validates prerequisites (`oc` CLI and cluster login)
+. Installs OpenShift GitOps Operator
+. Creates RBAC permissions
+. Creates workshop namespaces for all environments (dev, hml, prd)
+. Creates ArgoCD applications for all environments
+. Displays ArgoCD credentials for access
+
+=== Manual installation
+
+For detailed workshop demonstrations, you can install components step by step using the pre-created YAML files:
+
+. Install GitOps Operator:
++
+[source,role="execute"]
+----
+oc apply -f manual-install-files/01-gitops-operator-subscription.yaml
+----
+
+. Create RBAC permissions:
++
+[source,role="execute"]
+----
+oc apply -f manual-install-files/02-cluster-role-binding.yaml
+----
+
+. Create namespaces:
++
+[source,role="execute"]
+----
+oc apply -f manual-install-files/03-namespaces.yaml
+----
+
+. Create ArgoCD applications:
++
+[source,role="execute"]
+----
+oc apply -f manual-install-files/04-argocd-app-dev.yaml
+oc apply -f manual-install-files/05-argocd-app-hml.yaml
+oc apply -f manual-install-files/06-argocd-app-prd.yaml
+----
+
+=== Installation verification
+
+After installation, verify everything is working:
+
+[source,role="execute"]
+----
+oc get applications -n openshift-gitops
+oc get vms -n workshop-gitops-vms-dev
+oc get vms -n workshop-gitops-vms-hml
+oc get vms -n workshop-gitops-vms-prd
+oc get vmi -A
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh s
+----
+
+Expected ArgoCD applications:
+
+[source,text]
+----
+NAME                        SYNC STATUS   HEALTH STATUS
+workshop-gitops-vms-dev     Synced        Healthy
+workshop-gitops-vms-hml     Synced        Healthy
+workshop-gitops-vms-prd     Synced        Healthy
+----
+
+Expected virtual machines:
+
+[source,text]
+----
+NAMESPACE                   NAME            STATUS
+workshop-gitops-vms-dev     dev-vm-web-01   Running
+workshop-gitops-vms-dev     dev-vm-web-02   Running
+workshop-gitops-vms-hml     hml-vm-web-01   Running
+workshop-gitops-vms-hml     hml-vm-web-02   Running
+workshop-gitops-vms-prd     prd-vm-web-01   Running
+workshop-gitops-vms-prd     prd-vm-web-02   Running
+----
+
+== Workshop demonstrations
+
+The workshop includes four demonstrations. All are automated through Ansible playbooks and also documented with manual step-by-step instructions.
+
+=== Interactive demo runner
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh
+----
+
+Available options:
+
+* `1-4`: Execute individual demos with full automation
+* `a`: Run all demos sequentially with validation between each
+* `s`: Check comprehensive workshop status across all environments
+* `c`: Cleanup Demo 4 resources for repeatability
+* `q`: Quit the demo runner
+
+=== Demo 1: Manual change detection and drift correction
+
+*Purpose*: Demonstrate how ArgoCD detects and corrects configuration drift.
+
+Run with the demo runner:
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh 1
+----
+
+Or with Ansible directly:
+
+[source,role="execute"]
+----
+ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
+  /opt/OpenShift-Virtualization-GitOps/playbooks/demo1-manual-change.yaml
+----
+
+Detailed manual steps: xref:03-demo-01-manual-change.adoc[Demo 1].
+
+=== Demo 2: VM recovery from data loss
+
+*Purpose*: Demonstrate complete disaster recovery through Git-based reconstruction.
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh 2
+----
+
+Or:
+
+[source,role="execute"]
+----
+ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
+  /opt/OpenShift-Virtualization-GitOps/playbooks/demo2-vm-recovery.yaml
+----
+
+Detailed manual steps: xref:04-demo-02-vm-recovery.adoc[Demo 2].
+
+=== Demo 3: Adding new development VM via Git change
+
+*Purpose*: Demonstrate infrastructure provisioning through Git-based workflows.
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh 3
+----
+
+Or:
+
+[source,role="execute"]
+----
+ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
+  /opt/OpenShift-Virtualization-GitOps/playbooks/demo3-add-development-vm.yaml
+----
+
+Detailed manual steps: xref:05-demo-03-add-development-vm.adoc[Demo 3].
+
+=== Demo 4: Multi-environment VM management with Kustomize
+
+*Purpose*: Demonstrate promotion across environments using Kustomize overlays and Git branches.
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh 4
+----
+
+Or:
+
+[source,role="execute"]
+----
+ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
+  /opt/OpenShift-Virtualization-GitOps/playbooks/demo4-multi-env-management.yaml
+----
+
+Detailed manual steps: xref:06-demo-04-multi-env-management.adoc[Demo 4].

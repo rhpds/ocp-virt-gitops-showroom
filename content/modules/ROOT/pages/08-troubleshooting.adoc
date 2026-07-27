@@ -1,0 +1,118 @@
+= Monitoring and Troubleshooting
+:source-highlighter: rouge
+
+
+== Status checking
+
+Check the current state of all workshop components across environments:
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh s
+----
+
+This shows:
+
+* ArgoCD application status
+* Virtual machines in each environment
+* Sync status and health
+
+== Common issues and solutions
+
+=== SSH access issues
+
+[source,role="execute"]
+----
+oc get secret workshop-gitops-vms-dev -n workshop-gitops-vms-dev
+oc get secret workshop-gitops-vms-hml -n workshop-gitops-vms-hml
+oc get secret workshop-gitops-vms-prd -n workshop-gitops-vms-prd
+----
+
+Check VM access credentials:
+
+[source,role="execute"]
+----
+oc get vm <vm-name> -n <namespace> -o yaml | grep -A 10 accessCredentials
+----
+
+Clean known hosts:
+
+[source,role="execute"]
+----
+/opt/OpenShift-Virtualization-GitOps/run-demos.sh h
+----
+
+=== ArgoCD application issues
+
+[source,role="execute"]
+----
+oc get applications -n openshift-gitops
+----
+
+Force application sync if needed:
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"spec":{"syncPolicy":{"automated":null}},"operation":{"sync":{"revision":"HEAD","prune":true,"dryRun":false}}}'
+----
++
+[source,role="execute"]
+----
+oc describe applications workshop-gitops-vms-dev -n openshift-gitops
+----
+
+=== GitOps operator issues
+
+[source,role="execute"]
+----
+oc get csv -n openshift-operators | grep gitops
+oc get pods -n openshift-operators | grep gitops
+oc get pods -n openshift-gitops
+----
+
+=== Repository access issues
+
+[source,role="execute"]
+----
+oc get secret workshop-gitops-repo -n openshift-gitops
+oc get secret workshop-gitops-repo -n openshift-gitops -o yaml | grep labels -A5
+----
+
+=== Application sync issues
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc describe applications workshop-gitops-vms-dev -n openshift-gitops
+----
+
+== Regular monitoring commands
+
+=== Check application status
+
+[source,role="execute"]
+----
+oc get applications -n openshift-gitops
+----
+
+=== Check sync status
+
+[source,role="execute"]
+----
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml
+----
+
+=== Force sync
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops -p '{"operation":{"sync":{}}}' --type merge
+----
+
+=== Access ArgoCD UI
+
+[source,role="execute"]
+----
+oc get route openshift-gitops-server -n openshift-gitops
+oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d
+----

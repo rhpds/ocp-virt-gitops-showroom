@@ -1,7 +1,7 @@
 ---
 site:
-  title: Showroom Template Demo
-  url: https://github.com/rhpds/showroom_template_nookbag
+  title: OpenShift Virtualization GitOps Workshop
+  url: https://github.com/rhpds/ocp-virt-gitops-showroom
   start_page: modules::index.adoc
 
 content:

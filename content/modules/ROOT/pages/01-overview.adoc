@@ -1,0 +1,76 @@
+= Workshop Overview
+:source-highlighter: rouge
+
+
+This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (ArgoCD).
+
+== Learning objectives
+
+After completing this workshop, participants will understand:
+
+* How to implement GitOps for VM management
+* ArgoCD configuration and application management
+* Git-based workflow for infrastructure changes
+* Manual drift detection and correction
+* Disaster recovery using GitOps principles
+* Environment promotion strategies
+* Multi-environment deployments using branch-based strategies
+* Kustomize for environment-specific configurations
+* OpenShift Virtualization VM lifecycle management
+* Infrastructure as Code best practices for virtualized workloads
+
+== Architecture
+
+[source,text,subs="attributes+"]
+----
+Git Repository Structure
+├── Main Repository: OpenShift-Virtualization-GitOps
+│   ├── Installation scripts (install.sh, remove.sh)
+│   ├── Demo automation (run-demos.sh)
+│   ├── Manual installation YAML files
+│   └── Workshop documentation
+└── Apps Repository: OpenShift-Virtualization-GitOps-Apps
+   ├── vms-prd-{guid} branch (Production VMs) → overlays/prd
+   ├── vms-hml-{guid} branch (Homologation VMs) → overlays/hml
+   └── vms-dev-{guid} branch (Development VMs) → overlays/dev
+
+Kustomize Structure (in Apps Repository)
+├── base/ (Base VM templates)
+│   ├── vm-web-01.yaml
+│   ├── vm-web-02.yaml
+│   └── vm-web-service.yaml
+└── overlays/ (Environment-specific customizations)
+    ├── dev/ (Development patches)
+    ├── hml/ (Homologation patches)
+    └── prd/ (Production patches)
+
+ArgoCD Applications
+├── workshop-gitops-vms-prd → Apps repo vms-prd-{guid} → overlays/prd → workshop-gitops-vms-prd
+├── workshop-gitops-vms-hml → Apps repo vms-hml-{guid} → overlays/hml → workshop-gitops-vms-hml
+└── workshop-gitops-vms-dev → Apps repo vms-dev-{guid} → overlays/dev → workshop-gitops-vms-dev
+----
+
+== Workshop environments
+
+The workshop creates three environments with different resource allocations.
+
+=== Development environment (`vms-dev-{guid}` branch)
+
+* *Namespace*: `workshop-gitops-vms-dev`
+* *VMs*: `dev-vm-web-01`, `dev-vm-web-02`
+* *Resources*: 2 CPU, 2GB RAM, 30GB disk per VM
+* *Purpose*: Development and testing
+
+=== Homologation environment (`vms-hml-{guid}` branch)
+
+* *Namespace*: `workshop-gitops-vms-hml`
+* *VMs*: `hml-vm-web-01`, `hml-vm-web-02`
+* *Resources*: 2 CPU, 4GB RAM, 30GB disk per VM
+* *Purpose*: Pre-production testing
+
+=== Production environment (`vms-prd-{guid}` branch)
+
+* *Namespace*: `workshop-gitops-vms-prd`
+* *VMs*: `prd-vm-web-01`, `prd-vm-web-02`
+* *Resources*: 4 CPU, 8GB RAM, 50GB disk per VM
+* *Purpose*: Production workloads

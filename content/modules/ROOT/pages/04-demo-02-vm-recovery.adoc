@@ -1,0 +1,326 @@
+= Demo 2: VM Recovery from Data Loss
+:source-highlighter: rouge
+
+
+== Overview
+
+This demo demonstrates how GitOps can recover from complete system-level
+data loss scenarios. By forcing an rm -rf / on the VM, we simulate
+catastrophic data corruption or accidental mass deletion, then show how
+ArgoCD recreates the entire VM infrastructure from Git definitions
+through manual sync operations. The demo is automated through Ansible
+playbooks but includes manual step-by-step instructions for educational
+purposes.
+
+== Prerequisites
+
+* OpenShift GitOps Workshop installed and configured
+* GUID environment variable set (`export GUID={guid}`)
+* Workshop GitOps VMs development environment deployed
+* Access to OpenShift cluster with `oc` CLI and cluster admin privileges
+
+== What the Demo Does
+
+. *Initial Status Check*: Verifies the VM and associated resources exist
+. *Documentation*: Records current VM configuration before deletion
+. *Break the lab*: Executes `sudo rm -rf /++*++`
+. *Complete Deletion*: Removes VM, DataVolume, and associated resources
+(simulating data loss)
+. *Verification*: Confirms all resources are completely removed
+. *Recovery Monitoring*: Watches ArgoCD detect missing resources and
+trigger recovery
+. *Validation*: Verifies complete VM recreation with original
+configuration
+. *Service Testing*: Confirms the recovered VM is fully functional
+
+== Environment Details
+
+* *GUID*: Dynamic based on environment variable
+* *Namespace*: `workshop-gitops-vms-dev`
+* *VM Name*: `dev-vm-web-02`
+* *ArgoCD Application*: `workshop-gitops-vms-dev`
+* *Scenario*: Complete VM and storage deletion (simulating data
+corruption)
+
+== Step-by-Step Manual Instructions
+
+=== Step 1: Check Current VM State and Application Status
+
+. Check the ArgoCD application status:
++
+[source,role="execute"]
+----
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
+----
+
+. Verify the VM exists and its current state:
++
+[source,role="execute"]
+----
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
+----
+
+. Check associated DataVolume:
++
+[source,role="execute"]
+----
+oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
+----
+
+. Check VM pod if running:
++
+[source,role="execute"]
+----
+oc get pods -n workshop-gitops-vms-dev | grep dev-vm-web-02
+----
+
+*Expected Result*: VM should exist and be properly configured with
+associated storage
+
+=== Step 2: Simulate Data Corruption Scenario
+
+. Access the VM over SSH and remove /++*++:
++
+[source,role="execute"]
+----
+virtctl ssh cloud-user@dev-vm-web-02 -n workshop-gitops-vms-dev -c "sudo rm -rf /*"
+----
+
+. Stop the VM:
++
+[source,role="execute"]
+----
+virtctl stop dev-vm-web-02 -n workshop-gitops-vms-dev --force --grace-period 0
+----
+
+. Delete the VM:
++
+[source,role="execute"]
+----
+oc delete vm dev-vm-web-02 -n workshop-gitops-vms-dev
+----
+
+. Verify VM deletion:
++
+[source,role="execute"]
+----
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
+----
+
+*Expected Result*: VM should be deleted (command should return `not
+found`)
+
+=== Step 3: Delete Persistent Storage
+
+. Wait a moment for VM deletion to propagate:
++
+[source,role="execute"]
+----
+sleep 5
+----
+
+. Check if DataVolume still exists:
++
+[source,role="execute"]
+----
+oc get dv vm-web-02 -n workshop-gitops-vms-dev
+----
+
+. Delete the DataVolume to simulate complete data loss:
++
+[source,role="execute"]
+----
+oc delete dv vm-web-02 -n workshop-gitops-vms-dev
+----
+
+. Verify DataVolume deletion:
++
+[source,role="execute"]
+----
+oc get dv vm-web-02 -n workshop-gitops-vms-dev
+----
+
+*Expected Result*: Both VM and DataVolume should be completely removed
+
+=== Step 4: Wait for ArgoCD to Detect Missing Resources
+
+. Monitor application sync status until drift is detected:
++
+[source,role="execute"]
+----
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
+----
+
+. You can force a refresh if needed:
++
+[source,role="execute"]
+----
+oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argoproj.io/refresh="$(date)" --overwrite
+----
+
+*Expected Result*: Application sync status should change to
+`OutOfSync`
+
+=== Step 5: Trigger ArgoCD Sync for Recovery
+
+. Trigger manual sync to recreate the missing resources:
++
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}' &>/dev/null
+----
+
+. Monitor the sync process:
++
+[source,role="execute"]
+----
+watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}'
+----
+
+*Expected Result*: ArgoCD should start recreating the missing VM
+
+=== Step 6: Monitor VM Recreation
+
+. Watch for VM recreation:
++
+[source,role="execute"]
+----
+# Run this command repeatedly until VM appears
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
+----
+
+. Monitor VM status during creation:
++
+[source,role="execute"]
+----
+watch oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus"
+----
+
+. Check for DataVolume recreation:
++
+[source,role="execute"]
+----
+oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
+----
+
+*Expected Result*: VM should be recreated and start initializing
+
+=== Step 7: Wait for Application Sync Completion
+
+. Monitor until application returns to Synced state:
++
+[source,role="execute"]
+----
+watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}'
+----
+
+. Check application health:
++
+[source,role="execute"]
+----
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.health.status}' ; echo
+----
+
+*Expected Result*: Application should return to `Synced` and
+`Healthy` status
+
+=== Step 8: Verify Complete Recovery
+
+. Confirm VM exists and is properly configured:
++
+[source,role="execute"]
+----
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus,MEMORY:.spec.template.spec.domain.resources.requests.memory"
+----
+
+. Check DataVolume status:
++
+[source,role="execute"]
+----
+oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
+----
+
+. Verify VM configuration matches Git definition:
++
+[source,role="execute"]
+----
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
+----
++
+[source,role="execute"]
+----
+oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o jsonpath='{.spec.template.spec.domain.resources.requests.memory}' ; echo
+----
+
+. Check if VM is running (may take time to start):
++
+[source,role="execute"]
+----
+oc get vmi dev-vm-web-02 -n workshop-gitops-vms-dev
+----
+
+*Expected Result*:
+
+* VM should be recreated with correct configuration
+* DataVolume should be recreated
+* VM should eventually start running
+
+=== Step 9: Final Verification
+
+. List all VMs in the development environment:
++
+[source,role="execute"]
+----
+oc get vm -n workshop-gitops-vms-dev
+----
+
+. Check final application status:
++
+[source,role="execute"]
+----
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
+----
+
+. Verify the recreated VM has fresh storage:
++
+[source,role="execute"]
+----
+oc describe dv vm-web-02 -n workshop-gitops-vms-dev | grep -A 5 "Source:"
+----
+
+*Expected Result*: All resources should be recreated and application
+should be healthy
+
+== Summary of What Was Demonstrated
+
+* *Complete Data Loss*: Simulated catastrophic failure by deleting VM
+and storage
+* *Detection*: ArgoCD detected missing critical resources (OutOfSync
+status)
+* *Manual Recovery*: ArgoCD recreated all missing resources after manual
+sync
+* *Fresh Storage*: New DataVolume created with clean base image
+* *Full Restoration*: Complete infrastructure recovered from Git
+definitions
+* *Disaster Recovery*: Demonstrated GitOps-based disaster recovery
+capabilities
+
+== Key Learning Points
+
+* *Disaster Recovery*: GitOps provides disaster recovery capabilities
+through manual sync
+* *Infrastructure as Code*: VM definitions in Git enable complete
+recreation
+* *No Data Loss Prevention*: While data is lost, infrastructure is
+quickly restored
+* *Consistency*: Recovered VM matches exact Git specification
+* *Manual Control*: Sync operations require explicit manual trigger for
+controlled recovery
+* *Audit Trail*: Recovery process is logged and traceable
+
+== Use Cases
+
+This pattern is valuable for: - *Disaster Recovery*: Recovering from
+hardware failures - *Environment Refresh*: Creating clean development
+environments - *Compliance*: Ensuring infrastructure matches approved
+configurations - *Testing*: Validating complete deployment processes
