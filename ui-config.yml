@@ -11,9 +11,9 @@ view_switcher:
   default_mode: instructions
 
 tabs:
-  # Single terminal
+  # ttyd terminal proxied by nginx at /terminal/ (port 7681 in the pod)
   - name: Terminal
-    path: /wetty
+    path: /terminal/
     port: 443
 
   # OCP Console
