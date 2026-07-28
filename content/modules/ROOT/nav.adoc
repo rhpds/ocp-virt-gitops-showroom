@@ -13,4 +13,4 @@
 .Reference
 * xref:07-gitops-workflow.adoc[GitOps Workflow]
 * xref:08-troubleshooting.adoc[Troubleshooting]
-* xref:99-conclusion.adoc[Cleanup and Best Practices]
+* xref:99-conclusion.adoc[Best Practices]

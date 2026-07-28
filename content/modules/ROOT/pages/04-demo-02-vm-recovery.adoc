@@ -8,16 +8,13 @@ This demo demonstrates how GitOps can recover from complete system-level
 data loss scenarios. By forcing an rm -rf / on the VM, we simulate
 catastrophic data corruption or accidental mass deletion, then show how
 ArgoCD recreates the entire VM infrastructure from Git definitions
-through manual sync operations. The demo is automated through Ansible
-playbooks but includes manual step-by-step instructions for educational
-purposes.
+through manual sync operations.
 
 == Prerequisites
 
-* OpenShift GitOps Workshop installed and configured
 * GUID environment variable set (`export GUID={guid}`)
-* Workshop GitOps VMs development environment deployed
-* Access to OpenShift cluster with `oc` CLI and cluster admin privileges
+* Access to the Showroom terminal (already authenticated to the cluster)
+* Development environment VMs available (`workshop-gitops-vms-dev`)
 
 == What the Demo Does
 

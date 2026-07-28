@@ -2,41 +2,9 @@
 :source-highlighter: rouge
 
 
-== Cleanup Demo 3 or Demo 4
+== Cleanup Demo 3 or Demo 4 resources
 
-[source,role="execute"]
-----
-./run-demos.sh c
-----
-
-== Complete workshop removal
-
-[source,role="execute"]
-----
-./remove.sh
-----
-
-This will:
-
-. Remove all ArgoCD applications
-. Delete all workshop namespaces and VMs
-. Remove cluster role bindings
-. Optionally remove the GitOps operator
-
-== Manual cleanup
-
-If needed, you can remove individual components:
-
-[source,role="execute"]
-----
-oc delete -f manual-install-files/06-argocd-app-prd.yaml
-oc delete -f manual-install-files/05-argocd-app-hml.yaml
-oc delete -f manual-install-files/04-argocd-app-dev.yaml
-oc delete namespace workshop-gitops-vms-dev
-oc delete namespace workshop-gitops-vms-hml
-oc delete namespace workshop-gitops-vms-prd
-oc delete -f manual-install-files/02-cluster-role-binding.yaml
-----
+To reset resources created during Demo 3 or Demo 4 so you can repeat those labs, follow the cleanup steps at the end of each demo module. Do not uninstall operators, Applications, or namespaces -- those belong to the lab provisioning lifecycle.
 
 == VM templates
 
@@ -47,9 +15,9 @@ All VMs use the Fedora template with cloud-init for initial configuration:
 * SSH access configured
 * Environment-specific applications installed
 
-== ArgoCD configuration details
+== Argo CD configuration details
 
-Each ArgoCD application is configured with:
+Each Argo CD application is configured with:
 
 * *Automatic Sync*: Disabled (manual sync operations)
 
@@ -57,7 +25,7 @@ Each ArgoCD application is configured with:
 
 . *Infrastructure as Code*: All VM definitions stored in Git
 . *Environment Separation*: Different branches for different environments
-. *Manual Deployment*: Changes deployed via ArgoCD manual sync operations
+. *Manual Deployment*: Changes deployed via Argo CD manual sync operations
 . *Drift Detection*: Manual changes detected and corrected
 . *Disaster Recovery*: Complete environment recovery from Git
 . *Security*: Proper RBAC and namespace isolation

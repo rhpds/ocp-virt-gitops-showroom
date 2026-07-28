@@ -4,18 +4,15 @@
 
 == Status checking
 
-Check the current state of all workshop components across environments:
+Check Argo CD Applications and VMs across environments:
 
 [source,role="execute"]
 ----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh s
+oc get applications -n openshift-gitops
+oc get vms -n workshop-gitops-vms-dev
+oc get vms -n workshop-gitops-vms-hml
+oc get vms -n workshop-gitops-vms-prd
 ----
-
-This shows:
-
-* ArgoCD application status
-* Virtual machines in each environment
-* Sync status and health
 
 == Common issues and solutions
 
@@ -35,55 +32,35 @@ Check VM access credentials:
 oc get vm <vm-name> -n <namespace> -o yaml | grep -A 10 accessCredentials
 ----
 
-Clean known hosts:
+Clean known hosts before reconnecting:
 
 [source,role="execute"]
 ----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh h
+ssh-keygen -R <vm-ip-or-hostname>
 ----
 
-=== ArgoCD application issues
+=== Argo CD application issues
 
 [source,role="execute"]
 ----
 oc get applications -n openshift-gitops
+oc describe applications workshop-gitops-vms-dev -n openshift-gitops
 ----
 
 Force application sync if needed:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"spec":{"syncPolicy":{"automated":null}},"operation":{"sync":{"revision":"HEAD","prune":true,"dryRun":false}}}'
-----
-+
-[source,role="execute"]
-----
-oc describe applications workshop-gitops-vms-dev -n openshift-gitops
-----
-
-=== GitOps operator issues
-
-[source,role="execute"]
-----
-oc get csv -n openshift-operators | grep gitops
-oc get pods -n openshift-operators | grep gitops
-oc get pods -n openshift-gitops
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge \
+  --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 === Repository access issues
 
 [source,role="execute"]
 ----
-oc get secret workshop-gitops-repo -n openshift-gitops
-oc get secret workshop-gitops-repo -n openshift-gitops -o yaml | grep labels -A5
-----
-
-=== Application sync issues
-
-[source,role="execute"]
-----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
-oc describe applications workshop-gitops-vms-dev -n openshift-gitops
+oc get secret -n openshift-gitops | grep -i repo
+oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml | grep -A20 source
 ----
 
 == Regular monitoring commands
@@ -102,17 +79,10 @@ oc get applications -n openshift-gitops
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml
 ----
 
-=== Force sync
-
-[source,role="execute"]
-----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops -p '{"operation":{"sync":{}}}' --type merge
-----
-
-=== Access ArgoCD UI
+=== Access Argo CD UI
 
 [source,role="execute"]
 ----
 oc get route openshift-gitops-server -n openshift-gitops
-oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d
+oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d; echo
 ----

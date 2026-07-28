@@ -21,38 +21,33 @@ After completing this workshop, participants will understand:
 
 == Architecture
 
+The lab already deploys OpenShift GitOps Applications that sync VM manifests from the Apps Git repository (Gitea) using Kustomize overlays per environment.
+
 [source,text,subs="attributes+"]
 ----
-Git Repository Structure
-├── Main Repository: OpenShift-Virtualization-GitOps
-│   ├── Installation scripts (install.sh, remove.sh)
-│   ├── Demo automation (run-demos.sh)
-│   ├── Manual installation YAML files
-│   └── Workshop documentation
-└── Apps Repository: OpenShift-Virtualization-GitOps-Apps
-   ├── vms-prd-{guid} branch (Production VMs) → overlays/prd
-   ├── vms-hml-{guid} branch (Homologation VMs) → overlays/hml
-   └── vms-dev-{guid} branch (Development VMs) → overlays/dev
-
-Kustomize Structure (in Apps Repository)
-├── base/ (Base VM templates)
+Apps Repository (Gitea)
+├── Branches
+│   ├── vms-prd-{guid} → overlays/prd → namespace workshop-gitops-vms-prd
+│   ├── vms-hml-{guid} → overlays/hml → namespace workshop-gitops-vms-hml
+│   └── vms-dev-{guid} → overlays/dev → namespace workshop-gitops-vms-dev
+├── base/ (shared VM templates)
 │   ├── vm-web-01.yaml
 │   ├── vm-web-02.yaml
 │   └── vm-web-service.yaml
-└── overlays/ (Environment-specific customizations)
-    ├── dev/ (Development patches)
-    ├── hml/ (Homologation patches)
-    └── prd/ (Production patches)
+└── overlays/
+    ├── dev/
+    ├── hml/
+    └── prd/
 
-ArgoCD Applications
-├── workshop-gitops-vms-prd → Apps repo vms-prd-{guid} → overlays/prd → workshop-gitops-vms-prd
-├── workshop-gitops-vms-hml → Apps repo vms-hml-{guid} → overlays/hml → workshop-gitops-vms-hml
-└── workshop-gitops-vms-dev → Apps repo vms-dev-{guid} → overlays/dev → workshop-gitops-vms-dev
+Argo CD Applications (pre-installed)
+├── workshop-gitops-vms-prd
+├── workshop-gitops-vms-hml
+└── workshop-gitops-vms-dev
 ----
 
 == Workshop environments
 
-The workshop creates three environments with different resource allocations.
+The lab provides three environments with different resource allocations.
 
 === Development environment (`vms-dev-{guid}` branch)
 

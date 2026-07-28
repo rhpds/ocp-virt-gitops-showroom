@@ -9,17 +9,14 @@ Machines across multiple environments (development, homologation, and
 production) using Kustomize overlays and Git branch promotion
 strategies. It showcases how to efficiently manage environment-specific
 configurations while maintaining consistency across environments through
-manual sync operations. The demo is automated through Ansible playbooks
-but includes manual step-by-step instructions for educational purposes.
+manual sync operations.
 
 == Prerequisites
 
-* OpenShift GitOps Workshop installed and configured
 * GUID environment variable set (`export GUID={guid}`)
-* Workshop GitOps VMs deployed in all environments (dev, hml, prd)
-* Access to Git repository: `OpenShift-Virtualization-GitOps-Apps`
-* Git configured for commits and push access to the repository
-* Demo 3 completed (dev-vm-web-09 exists in development environment)
+* Access to the Showroom terminal (already authenticated to the cluster)
+* Access to the Apps Git repository (Gitea) for clone, commit, and push
+* Demo 3 completed (`dev-vm-web-09` exists in the development environment)
 
 == What the Demo Does
 

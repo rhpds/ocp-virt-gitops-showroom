@@ -9,14 +9,14 @@ This workshop demonstrates how to implement GitOps principles for managing Virtu
 Follow the modules in order. Each demo builds on the previous one.
 
 . xref:01-overview.adoc[Workshop Overview] -- learning objectives, architecture, and environments
-. xref:02-details.adoc[Workshop Details] -- prerequisites, installation, and demo summaries
+. xref:02-details.adoc[Workshop Details] -- verify the pre-provisioned lab and demo summaries
 . xref:03-demo-01-manual-change.adoc[Demo 1] -- manual change detection and drift correction
 . xref:04-demo-02-vm-recovery.adoc[Demo 2] -- VM recovery from data loss
 . xref:05-demo-03-add-development-vm.adoc[Demo 3] -- adding a new development VM via Git
 . xref:06-demo-04-multi-env-management.adoc[Demo 4] -- multi-environment management with Kustomize
 . xref:07-gitops-workflow.adoc[GitOps Workflow] -- promotion flow and VM access
 . xref:08-troubleshooting.adoc[Troubleshooting] -- monitoring and common issues
-. xref:99-conclusion.adoc[Cleanup] -- cleanup and best practices
+. xref:99-conclusion.adoc[Cleanup] -- demo reset notes and best practices
 
 == Environment GUID
 

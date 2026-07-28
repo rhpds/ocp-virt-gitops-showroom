@@ -2,68 +2,22 @@
 :source-highlighter: rouge
 
 
-== Prerequisites
+== Lab environment
 
-* OpenShift cluster with OpenShift Virtualization installed
-* `oc` CLI configured and logged in
-* `ansible-playbook` installed
-* Git repositories configured
+This lab is pre-provisioned. OpenShift Virtualization, OpenShift GitOps (Argo CD), namespaces, and Argo CD Applications are already installed. You do not need to run any installation scripts.
 
-== Installation
+Confirm the environment GUID and that the Showroom terminal can reach the cluster:
 
-=== Automated installation
-
-[source,role="execute"]
+[source,subs="attributes+",role="execute"]
 ----
-./install.sh
+export GUID={guid}
+echo $GUID
+oc whoami
 ----
 
-What the automated installation does:
+== Environment verification
 
-. Validates prerequisites (`oc` CLI and cluster login)
-. Installs OpenShift GitOps Operator
-. Creates RBAC permissions
-. Creates workshop namespaces for all environments (dev, hml, prd)
-. Creates ArgoCD applications for all environments
-. Displays ArgoCD credentials for access
-
-=== Manual installation
-
-For detailed workshop demonstrations, you can install components step by step using the pre-created YAML files:
-
-. Install GitOps Operator:
-+
-[source,role="execute"]
-----
-oc apply -f manual-install-files/01-gitops-operator-subscription.yaml
-----
-
-. Create RBAC permissions:
-+
-[source,role="execute"]
-----
-oc apply -f manual-install-files/02-cluster-role-binding.yaml
-----
-
-. Create namespaces:
-+
-[source,role="execute"]
-----
-oc apply -f manual-install-files/03-namespaces.yaml
-----
-
-. Create ArgoCD applications:
-+
-[source,role="execute"]
-----
-oc apply -f manual-install-files/04-argocd-app-dev.yaml
-oc apply -f manual-install-files/05-argocd-app-hml.yaml
-oc apply -f manual-install-files/06-argocd-app-prd.yaml
-----
-
-=== Installation verification
-
-After installation, verify everything is working:
+Verify Argo CD Applications and VMs are present:
 
 [source,role="execute"]
 ----
@@ -71,11 +25,9 @@ oc get applications -n openshift-gitops
 oc get vms -n workshop-gitops-vms-dev
 oc get vms -n workshop-gitops-vms-hml
 oc get vms -n workshop-gitops-vms-prd
-oc get vmi -A
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh s
 ----
 
-Expected ArgoCD applications:
+Expected Argo CD applications:
 
 [source,text]
 ----
@@ -98,99 +50,40 @@ workshop-gitops-vms-prd     prd-vm-web-01   Running
 workshop-gitops-vms-prd     prd-vm-web-02   Running
 ----
 
-== Workshop demonstrations
-
-The workshop includes four demonstrations. All are automated through Ansible playbooks and also documented with manual step-by-step instructions.
-
-=== Interactive demo runner
+If an Application shows `OutOfSync` or `Missing`, sync it from the OpenShift GitOps UI or with:
 
 [source,role="execute"]
 ----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh
+for app in workshop-gitops-vms-dev workshop-gitops-vms-hml workshop-gitops-vms-prd; do
+  oc patch applications "$app" -n openshift-gitops --type merge \
+    -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+done
 ----
 
-Available options:
+== Workshop demonstrations
 
-* `1-4`: Execute individual demos with full automation
-* `a`: Run all demos sequentially with validation between each
-* `s`: Check comprehensive workshop status across all environments
-* `c`: Cleanup Demo 4 resources for repeatability
-* `q`: Quit the demo runner
+The workshop includes four demonstrations. Follow the step-by-step instructions in each demo module.
 
 === Demo 1: Manual change detection and drift correction
 
-*Purpose*: Demonstrate how ArgoCD detects and corrects configuration drift.
+*Purpose*: Demonstrate how Argo CD detects and corrects configuration drift.
 
-Run with the demo runner:
-
-[source,role="execute"]
-----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh 1
-----
-
-Or with Ansible directly:
-
-[source,role="execute"]
-----
-ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
-  /opt/OpenShift-Virtualization-GitOps/playbooks/demo1-manual-change.yaml
-----
-
-Detailed manual steps: xref:03-demo-01-manual-change.adoc[Demo 1].
+Detailed steps: xref:03-demo-01-manual-change.adoc[Demo 1].
 
 === Demo 2: VM recovery from data loss
 
 *Purpose*: Demonstrate complete disaster recovery through Git-based reconstruction.
 
-[source,role="execute"]
-----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh 2
-----
-
-Or:
-
-[source,role="execute"]
-----
-ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
-  /opt/OpenShift-Virtualization-GitOps/playbooks/demo2-vm-recovery.yaml
-----
-
-Detailed manual steps: xref:04-demo-02-vm-recovery.adoc[Demo 2].
+Detailed steps: xref:04-demo-02-vm-recovery.adoc[Demo 2].
 
 === Demo 3: Adding new development VM via Git change
 
 *Purpose*: Demonstrate infrastructure provisioning through Git-based workflows.
 
-[source,role="execute"]
-----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh 3
-----
-
-Or:
-
-[source,role="execute"]
-----
-ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
-  /opt/OpenShift-Virtualization-GitOps/playbooks/demo3-add-development-vm.yaml
-----
-
-Detailed manual steps: xref:05-demo-03-add-development-vm.adoc[Demo 3].
+Detailed steps: xref:05-demo-03-add-development-vm.adoc[Demo 3].
 
 === Demo 4: Multi-environment VM management with Kustomize
 
 *Purpose*: Demonstrate promotion across environments using Kustomize overlays and Git branches.
 
-[source,role="execute"]
-----
-/opt/OpenShift-Virtualization-GitOps/run-demos.sh 4
-----
-
-Or:
-
-[source,role="execute"]
-----
-ansible-playbook -i /opt/OpenShift-Virtualization-GitOps/inventory/localhost \
-  /opt/OpenShift-Virtualization-GitOps/playbooks/demo4-multi-env-management.yaml
-----
-
-Detailed manual steps: xref:06-demo-04-multi-env-management.adoc[Demo 4].
+Detailed steps: xref:06-demo-04-multi-env-management.adoc[Demo 4].

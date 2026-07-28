@@ -15,3 +15,4 @@ tabs:
 
   - name: OCP Console
     url: 'https://console-openshift-console.${DOMAIN}'
+    external: true
