@@ -26,6 +26,40 @@ List Argo CD Applications for the workshop:
 oc get applications -n openshift-gitops
 ----
 
+[IMPORTANT]
+====
+At lab start the Argo CD Applications often show `OutOfSync` or `Missing`.
+Automatic sync is disabled in this workshop, so you **must** sync all three Applications now before any demo.
+====
+
+Sync the development Argo CD Application:
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+----
+
+Sync the homologation Argo CD Application:
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+----
+
+Sync the production Argo CD Application:
+
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+----
+
+Confirm all Applications report `Synced` and `Healthy`:
+
+[source,role="execute"]
+----
+oc get applications -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
+----
+
 == Clone the Apps Git repository
 
 Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home directory (there is no `/opt/...` checkout in this lab).
@@ -147,28 +181,7 @@ workshop-gitops-vms-prd     prd-vm-web-01   Running
 workshop-gitops-vms-prd     prd-vm-web-02   Running
 ----
 
-If an Application shows `OutOfSync` or `Missing`, sync each one:
-
-Sync the development Argo CD Application:
-
-[source,role="execute"]
-----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
-----
-
-Sync the homologation Argo CD Application:
-
-[source,role="execute"]
-----
-oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
-----
-
-Sync the production Argo CD Application:
-
-[source,role="execute"]
-----
-oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
-----
+If any Application is still `OutOfSync` or `Missing`, re-run the three sync commands from <<Lab environment>> and wait until VMs reach `Running`.
 
 == Workshop demonstrations
 
