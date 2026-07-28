@@ -29,7 +29,7 @@ oc get applications -n openshift-gitops
 [IMPORTANT]
 ====
 At lab start the Argo CD Applications often show `OutOfSync` or `Missing`.
-Automatic sync is disabled in this workshop, so you **must** sync all three Applications now before any demo.
+Automatic sync is disabled in this workshop, so you may need to sync all three Applications now before starting the lab.
 ====
 
 Sync the development Argo CD Application:
