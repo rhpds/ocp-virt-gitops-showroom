@@ -1,7 +1,6 @@
 = Workshop Overview
 :source-highlighter: rouge
 
-
 This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == Learning objectives

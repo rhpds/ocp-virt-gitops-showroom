@@ -1,32 +1,35 @@
 = Monitoring and Troubleshooting
 :source-highlighter: rouge
 
-
 == Status checking
 
 Check Argo CD Applications and VMs across environments:
 
+List Argo CD Applications:
+
 [source,role="execute"]
 ----
-# List Argo CD Applications
 oc get applications -n openshift-gitops
 ----
 
+List VMs in the development namespace:
+
 [source,role="execute"]
 ----
-# List VMs in the development namespace
 oc get vms -n workshop-gitops-vms-dev
 ----
 
-[source,role="execute"]
-----
-# List VMs in the homologation namespace
-oc get vms -n workshop-gitops-vms-hml
-----
+List VMs in the homologation namespace:
 
 [source,role="execute"]
 ----
-# List VMs in the production namespace
+oc get vms -n workshop-gitops-vms-hml
+----
+
+List VMs in the production namespace:
+
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-prd
 ----
 
@@ -34,73 +37,77 @@ oc get vms -n workshop-gitops-vms-prd
 
 === SSH access issues
 
+Check the SSH secret in development:
+
 [source,role="execute"]
 ----
-# Check the SSH secret in development
 oc get secret workshop-gitops-vms-dev -n workshop-gitops-vms-dev
 ----
 
+Check the SSH secret in homologation:
+
 [source,role="execute"]
 ----
-# Check the SSH secret in homologation
 oc get secret workshop-gitops-vms-hml -n workshop-gitops-vms-hml
 ----
 
+Check the SSH secret in production:
+
 [source,role="execute"]
 ----
-# Check the SSH secret in production
 oc get secret workshop-gitops-vms-prd -n workshop-gitops-vms-prd
 ----
 
-Check VM access credentials:
+Inspect accessCredentials on a VM:
 
 [source,role="execute"]
 ----
-# Inspect accessCredentials on a VM
 oc get vm <vm-name> -n <namespace> -o yaml | grep -A 10 accessCredentials
 ----
 
-Clean known hosts before reconnecting:
+Remove a stale SSH known_hosts entry:
 
 [source,role="execute"]
 ----
-# Remove a stale SSH known_hosts entry
 ssh-keygen -R <vm-ip-or-hostname>
 ----
 
 === Argo CD application issues
 
+List Argo CD Applications:
+
 [source,role="execute"]
 ----
-# List Argo CD Applications
 oc get applications -n openshift-gitops
 ----
 
+Describe the development Application:
+
 [source,role="execute"]
 ----
-# Describe the development Application
 oc describe applications workshop-gitops-vms-dev -n openshift-gitops
 ----
 
-Force application sync if needed:
+Force sync of the development Application:
 
 [source,role="execute"]
 ----
-# Force sync of the development Application
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 === Repository access issues
 
-[source,role="execute"]
-----
-# List repository secrets in openshift-gitops
-oc get secret -n openshift-gitops | grep -i repo
-----
+List repository secrets in openshift-gitops:
 
 [source,role="execute"]
 ----
-# Inspect the Application source configuration
+oc get secret -n openshift-gitops | grep -i repo
+----
+
+Inspect the Application source configuration:
+
+[source,role="execute"]
+----
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml | grep -A20 source
 ----
 
@@ -108,30 +115,34 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml | grep -
 
 === Check application status
 
+List Argo CD Applications:
+
 [source,role="execute"]
 ----
-# List Argo CD Applications
 oc get applications -n openshift-gitops
 ----
 
 === Check sync status
 
+Show full YAML for the development Application:
+
 [source,role="execute"]
 ----
-# Show full YAML for the development Application
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml
 ----
 
 === Access Argo CD UI
 
-[source,role="execute"]
-----
-# Get the Argo CD server route
-oc get route openshift-gitops-server -n openshift-gitops
-----
+Get the Argo CD server route:
 
 [source,role="execute"]
 ----
-# Print the Argo CD admin password
+oc get route openshift-gitops-server -n openshift-gitops
+----
+
+Print the Argo CD admin password:
+
+[source,role="execute"]
+----
 oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d; echo
 ----

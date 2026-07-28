@@ -44,7 +44,6 @@ corruption)
 
 [source,role="execute"]
 ----
-# Check the ArgoCD application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -52,7 +51,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-column
 
 [source,role="execute"]
 ----
-# Verify the VM exists and its current state
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -60,7 +58,6 @@ oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Check associated DataVolume
 oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 ----
 
@@ -68,7 +65,6 @@ oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 
 [source,role="execute"]
 ----
-# Check VM pod if running
 oc get pods -n workshop-gitops-vms-dev | grep dev-vm-web-02
 ----
 
@@ -81,7 +77,6 @@ associated storage
 
 [source,role="execute"]
 ----
-# Destroy OS files inside the VM over SSH
 virtctl ssh cloud-user@dev-vm-web-02 -n workshop-gitops-vms-dev -c "sudo rm -rf /*"
 ----
 
@@ -89,7 +84,6 @@ virtctl ssh cloud-user@dev-vm-web-02 -n workshop-gitops-vms-dev -c "sudo rm -rf 
 
 [source,role="execute"]
 ----
-# Stop the VM
 virtctl stop dev-vm-web-02 -n workshop-gitops-vms-dev --force --grace-period 0
 ----
 
@@ -97,7 +91,6 @@ virtctl stop dev-vm-web-02 -n workshop-gitops-vms-dev --force --grace-period 0
 
 [source,role="execute"]
 ----
-# Delete the VM
 oc delete vm dev-vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -105,7 +98,6 @@ oc delete vm dev-vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Verify VM deletion
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -118,7 +110,6 @@ found`)
 
 [source,role="execute"]
 ----
-# Wait a moment for VM deletion to propagate
 sleep 5
 ----
 
@@ -126,7 +117,6 @@ sleep 5
 
 [source,role="execute"]
 ----
-# Check if DataVolume still exists
 oc get dv vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -134,7 +124,6 @@ oc get dv vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Delete the DataVolume to simulate complete data loss
 oc delete dv vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -142,7 +131,6 @@ oc delete dv vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Verify DataVolume deletion
 oc get dv vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -154,7 +142,6 @@ oc get dv vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Monitor application sync status until drift is detected
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
 
@@ -162,7 +149,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-# You can force a refresh if needed
 oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argoproj.io/refresh="$(date)" --overwrite
 ----
 
@@ -175,7 +161,6 @@ oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argo
 
 [source,role="execute"]
 ----
-# Trigger manual sync to recreate the missing resources
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' &>/dev/null
 ----
 
@@ -183,7 +168,6 @@ oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -
 
 [source,role="execute"]
 ----
-# Monitor the sync process
 watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}'
 ----
 
@@ -195,7 +179,6 @@ watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpat
 
 [source,role="execute"]
 ----
-# Run this command repeatedly until VM appears
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -203,7 +186,6 @@ oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Monitor VM status during creation
 watch oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus"
 ----
 
@@ -211,7 +193,6 @@ watch oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME
 
 [source,role="execute"]
 ----
-# Check for DataVolume recreation
 oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 ----
 
@@ -223,7 +204,6 @@ oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 
 [source,role="execute"]
 ----
-# Monitor until application returns to Synced state
 watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}'
 ----
 
@@ -231,7 +211,6 @@ watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpat
 
 [source,role="execute"]
 ----
-# Check application health
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.health.status}' ; echo
 ----
 
@@ -244,7 +223,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-# Confirm VM exists and is properly configured
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus,MEMORY:.spec.template.spec.domain.resources.requests.memory"
 ----
 
@@ -252,7 +230,6 @@ oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o custom-columns="NAME:.meta
 
 [source,role="execute"]
 ----
-# Check DataVolume status
 oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 ----
 
@@ -260,13 +237,13 @@ oc get dv -n workshop-gitops-vms-dev | grep vm-web-02
 
 [source,role="execute"]
 ----
-# Verify VM configuration matches Git definition
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
+Verify requested memory matches Git definition:
+
 [source,role="execute"]
 ----
-# Verify requested memory matches Git definition
 oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o jsonpath='{.spec.template.spec.domain.resources.requests.memory}' ; echo
 ----
 
@@ -274,7 +251,6 @@ oc get vm dev-vm-web-02 -n workshop-gitops-vms-dev -o jsonpath='{.spec.template.
 
 [source,role="execute"]
 ----
-# Check if VM is running (may take time to start)
 oc get vmi dev-vm-web-02 -n workshop-gitops-vms-dev
 ----
 
@@ -290,7 +266,6 @@ oc get vmi dev-vm-web-02 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# List all VMs in the development environment
 oc get vm -n workshop-gitops-vms-dev
 ----
 
@@ -298,7 +273,6 @@ oc get vm -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Check final application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -306,7 +280,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-column
 
 [source,role="execute"]
 ----
-# Verify the recreated VM has fresh storage
 oc describe dv vm-web-02 -n workshop-gitops-vms-dev | grep -A 5 "Source:"
 ----
 

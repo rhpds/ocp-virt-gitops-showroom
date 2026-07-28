@@ -1,7 +1,6 @@
 = OpenShift Virtualization GitOps Workshop
 :source-highlighter: rouge
 
-
 This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == How to use this guide
@@ -28,21 +27,20 @@ The Showroom terminal starts as a limited service account. Log in as the lab adm
 
 [source,subs="attributes+",role="execute"]
 ----
-# Log in as the lab cluster admin
 oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' --server={openshift_api_server_url} --insecure-skip-tls-verify=true
 ----
 
-Verify access:
+Confirm the current OpenShift user:
 
 [source,role="execute"]
 ----
-# Confirm the current OpenShift user
 oc whoami
 ----
 
+List Argo CD Applications for the workshop:
+
 [source,role="execute"]
 ----
-# List Argo CD Applications for the workshop
 oc get applications -n openshift-gitops
 ----
 

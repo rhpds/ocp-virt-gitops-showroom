@@ -1,7 +1,6 @@
 = Cleanup and Best Practices
 :source-highlighter: rouge
 
-
 == Cleanup Demo 3 or Demo 4 resources
 
 To reset resources created during Demo 3 or Demo 4 so you can repeat those labs, follow the cleanup steps at the end of each demo module. Do not uninstall operators, Applications, or namespaces -- those belong to the lab provisioning lifecycle.

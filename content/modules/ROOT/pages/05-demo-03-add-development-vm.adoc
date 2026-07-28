@@ -45,7 +45,6 @@ operational
 
 [source,role="execute"]
 ----
-# Check current ArgoCD application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -53,7 +52,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-column
 
 [source,role="execute"]
 ----
-# List existing VMs in development environment
 oc get vm -n workshop-gitops-vms-dev | grep -E "(NAME|dev-vm-web)"
 ----
 
@@ -61,7 +59,6 @@ oc get vm -n workshop-gitops-vms-dev | grep -E "(NAME|dev-vm-web)"
 
 [source,role="execute"]
 ----
-# Verify the new VM doesn’t exist yet
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev
 ----
 
@@ -74,7 +71,6 @@ vm-web-02, vm-web-03), and dev-vm-web-09 should not exist
 
 [source,role="execute"]
 ----
-# Change to your Git repository directory
 cd ~/ocp-virt-gitops-apps
 ----
 
@@ -82,7 +78,6 @@ cd ~/ocp-virt-gitops-apps
 
 [source,role="execute"]
 ----
-# Ensure you’re on the correct branch
 git branch --show-current
 ----
 
@@ -90,7 +85,6 @@ git branch --show-current
 
 [source,role="execute"]
 ----
-# Switch to the vms-dev branch if needed
 git checkout vms-dev
 ----
 
@@ -98,7 +92,6 @@ git checkout vms-dev
 
 [source,role="execute"]
 ----
-# Pull latest changes
 git pull origin vms-dev
 ----
 
@@ -110,7 +103,6 @@ git pull origin vms-dev
 
 [source,role="execute"]
 ----
-# Create the new VM file base/vm-web-09.yaml
 cat > base/vm-web-09.yaml << 'EOF'
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
@@ -208,7 +200,6 @@ EOF
 
 [source,role="execute"]
 ----
-# Verify the file was created
 ls -la base/vm-web-09.yaml
 ----
 
@@ -216,7 +207,6 @@ ls -la base/vm-web-09.yaml
 
 [source,role="execute"]
 ----
-# View the first 20 lines of the new file
 cat base/vm-web-09.yaml | head -20
 ----
 
@@ -228,7 +218,6 @@ cat base/vm-web-09.yaml | head -20
 
 [source,role="execute"]
 ----
-# Update the base/kustomization.yaml file
 cat > base/kustomization.yaml << 'EOF'
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -245,7 +234,6 @@ EOF
 
 [source,role="execute"]
 ----
-# Verify the updated kustomization
 cat base/kustomization.yaml
 ----
 
@@ -258,7 +246,6 @@ resources list
 
 [source,role="execute"]
 ----
-# Check Git status
 git status
 ----
 
@@ -266,7 +253,6 @@ git status
 
 [source,role="execute"]
 ----
-# Add the new files
 git add .
 ----
 
@@ -274,7 +260,6 @@ git add .
 
 [source,role="execute"]
 ----
-# Commit the changes
 git commit -m "feat: add development VM web-09 for expanded testing environment
 
 - Add vm-web-09.yaml with Fedora-based web server configuration
@@ -286,7 +271,6 @@ git commit -m "feat: add development VM web-09 for expanded testing environment
 
 [source,role="execute"]
 ----
-# Push changes to repository
 git push origin vms-dev
 ----
 
@@ -294,7 +278,6 @@ git push origin vms-dev
 
 [source,role="execute"]
 ----
-# Verify push was successful
 git log --oneline -1
 ----
 
@@ -307,7 +290,6 @@ vms-dev branch
 
 [source,role="execute"]
 ----
-# Return to your original working directory
 cd -
 ----
 
@@ -315,7 +297,6 @@ cd -
 
 [source,role="execute"]
 ----
-# Force ArgoCD to check for changes
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
@@ -323,7 +304,6 @@ oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -
 
 [source,role="execute"]
 ----
-# Monitor application status until drift is detected
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
 
@@ -335,7 +315,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-# Trigger manual sync
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
@@ -343,7 +322,6 @@ oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -
 
 [source,role="execute"]
 ----
-# Monitor sync progress
 watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}'
 ----
 
@@ -355,7 +333,6 @@ watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpat
 
 [source,role="execute"]
 ----
-# Watch for new VM creation
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev
 ----
 
@@ -363,7 +340,6 @@ oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Monitor VM status during creation
 watch oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus"
 ----
 
@@ -371,7 +347,6 @@ watch oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o custom-columns="NAME
 
 [source,role="execute"]
 ----
-# Check DataVolume creation
 oc get dv -n workshop-gitops-vms-dev | grep vm-web-09
 ----
 
@@ -383,7 +358,6 @@ oc get dv -n workshop-gitops-vms-dev | grep vm-web-09
 
 [source,role="execute"]
 ----
-# Monitor until application returns to Synced state
 watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -395,7 +369,6 @@ watch oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-
 
 [source,role="execute"]
 ----
-# Check that the new VM exists and is properly configured
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o custom-columns="NAME:.metadata.name,STATUS:.status.printableStatus,MEMORY:.spec.template.spec.domain.resources.requests.memory"
 ----
 
@@ -403,13 +376,13 @@ oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o custom-columns="NAME:.meta
 
 [source,role="execute"]
 ----
-# Verify VM configuration
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o jsonpath='{.spec.running}' ; echo
 ----
 
+Check CPU cores on the new VM:
+
 [source,role="execute"]
 ----
-# Check CPU cores on the new VM
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o jsonpath='{.spec.template.spec.domain.cpu.cores}' ; echo
 ----
 
@@ -417,7 +390,6 @@ oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o jsonpath='{.spec.template.
 
 [source,role="execute"]
 ----
-# List all VMs in development environment
 oc get vm -n workshop-gitops-vms-dev | grep -E "(NAME|dev-vm-web)"
 ----
 
@@ -425,7 +397,6 @@ oc get vm -n workshop-gitops-vms-dev | grep -E "(NAME|dev-vm-web)"
 
 [source,role="execute"]
 ----
-# Check if VM is running (may take time to start)
 oc get vmi dev-vm-web-09 -n workshop-gitops-vms-dev
 ----
 
@@ -441,7 +412,6 @@ oc get vmi dev-vm-web-09 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Verify final application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -449,7 +419,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-column
 
 [source,role="execute"]
 ----
-# Count total VMs in environment
 oc get vm -n workshop-gitops-vms-dev --no-headers | wc -l
 ----
 
@@ -457,7 +426,6 @@ oc get vm -n workshop-gitops-vms-dev --no-headers | wc -l
 
 [source,role="execute"]
 ----
-# Check VM labels and annotations
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev -o jsonpath='{.metadata.labels}' ; echo
 ----
 
@@ -508,7 +476,6 @@ To remove the new VM after the demo:
 
 [source,role="execute"]
 ----
-# Enter the Apps repository
 cd ~/ocp-virt-gitops-apps
 ----
 
@@ -516,7 +483,6 @@ cd ~/ocp-virt-gitops-apps
 
 [source,role="execute"]
 ----
-# Delete the VM file
 rm base/vm-web-09.yaml
 ----
 
@@ -524,7 +490,6 @@ rm base/vm-web-09.yaml
 
 [source,role="execute"]
 ----
-# Stage all changes
 git add -A
 ----
 
@@ -532,7 +497,6 @@ git add -A
 
 [source,role="execute"]
 ----
-# Commit the cleanup
 git commit -m "cleanup: remove demo VM web-09"
 ----
 
@@ -540,6 +504,5 @@ git commit -m "cleanup: remove demo VM web-09"
 
 [source,role="execute"]
 ----
-# Push to the development branch
 git push origin vms-dev
 ----

@@ -40,13 +40,13 @@ state
 
 [source,role="execute"]
 ----
-# Check the ArgoCD application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
 
+Check the ArgoCD application health:
+
 [source,role="execute"]
 ----
-# Check the ArgoCD application health
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.health.status}' ; echo
 ----
 
@@ -54,13 +54,13 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-# Verify the VM exists and is running
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
+Verify the VirtualMachineInstance is running:
+
 [source,role="execute"]
 ----
-# Verify the VirtualMachineInstance is running
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -68,7 +68,6 @@ oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Check the current runStrategy (should be Always)
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
@@ -81,7 +80,6 @@ oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrate
 
 [source,role="execute"]
 ----
-# Apply a manual change to halt the VM
 oc patch vm dev-vm-web-01 -n workshop-gitops-vms-dev --type merge -p '{"spec":{"runStrategy":"Halted"}}'
 ----
 
@@ -89,7 +87,6 @@ oc patch vm dev-vm-web-01 -n workshop-gitops-vms-dev --type merge -p '{"spec":{"
 
 [source,role="execute"]
 ----
-# Verify the change was applied
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
@@ -101,7 +98,6 @@ oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrate
 
 [source,role="execute"]
 ----
-# Monitor the VirtualMachineInstance deletion
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -109,7 +105,6 @@ oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Wait for the VMI to be completely removed
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -122,7 +117,6 @@ confirming the VM has stopped
 
 [source,role="execute"]
 ----
-# Force application refresh to detect changes
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
@@ -130,7 +124,6 @@ oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -
 
 [source,role="execute"]
 ----
-# Check application status repeatedly until drift is detected
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
 
@@ -142,7 +135,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-# Check that the runStrategy has been reverted
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
@@ -150,7 +142,6 @@ oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrate
 
 [source,role="execute"]
 ----
-# Wait for the VM to start again
 watch oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.status.printableStatus}'
 ----
 
@@ -158,7 +149,6 @@ watch oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.status.p
 
 [source,role="execute"]
 ----
-# Verify the VirtualMachineInstance is running
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -174,7 +164,6 @@ oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 
 [source,role="execute"]
 ----
-# Check final application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
@@ -182,7 +171,6 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-column
 
 [source,role="execute"]
 ----
-# List all VMs in the development environment
 oc get vm -n workshop-gitops-vms-dev
 ----
 
