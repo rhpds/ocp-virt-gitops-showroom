@@ -10,7 +10,6 @@ to the state defined in Git through manual sync operations.
 
 == Prerequisites
 
-* GUID environment variable set (`export GUID={guid}`)
 * Access to the Showroom terminal (already authenticated to the cluster)
 * Development environment VMs available (`workshop-gitops-vms-dev`)
 
@@ -28,7 +27,6 @@ state
 
 == Environment Details
 
-* *GUID*: Dynamic based on environment variable
 * *Namespace*: `workshop-gitops-vms-dev`
 * *VM Name*: `dev-vm-web-01`
 * *ArgoCD Application*: `workshop-gitops-vms-dev`

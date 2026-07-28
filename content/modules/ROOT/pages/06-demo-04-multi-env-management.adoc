@@ -13,9 +13,8 @@ manual sync operations.
 
 == Prerequisites
 
-* GUID environment variable set (`export GUID={guid}`)
 * Access to the Showroom terminal (already authenticated to the cluster)
-* Access to the Apps Git repository (Gitea) for clone, commit, and push
+* Apps repository cloned as described in xref:02-details.adoc[Workshop Details] (`~/ocp-virt-gitops-apps`)
 * Demo 3 completed (`dev-vm-web-09` exists in the development environment)
 
 == What the Demo Does
@@ -37,15 +36,14 @@ across environments (CPU, memory, naming)
 
 == Environment Details
 
-* *GUID*: Dynamic based on environment variable
 * *Development Namespace*: `workshop-gitops-vms-dev`
 * *Homologation Namespace*: `workshop-gitops-vms-hml`
 * *Production Namespace*: `workshop-gitops-vms-prd`
-* *ArgoCD Applications*:
-** `workshop-gitops-vms-dev` (targets `vms-dev-{guid}` branch)
-** `workshop-gitops-vms-hml` (targets `vms-hml-{guid}` branch)
-** `workshop-gitops-vms-prd` (targets `vms-prd-{guid}` branch)
-* *Git Repository*: `OpenShift-Virtualization-GitOps-Apps`
+* *Argo CD Applications*:
+** `workshop-gitops-vms-dev` (branch `vms-dev`)
+** `workshop-gitops-vms-hml` (branch `vms-hml`)
+** `workshop-gitops-vms-prd` (branch `vms-prd`)
+* *Git Repository*: `~/ocp-virt-gitops-apps` (Gitea)
 
 == Kustomize Environment Strategy
 
@@ -116,18 +114,18 @@ environment
 
 === Step 2: Navigate to Git Repository and Check Branches
 
-. Change to your Git repository directory:
+. Change to your Git repository directory (clone first if needed -- see xref:02-details.adoc[Workshop Details]):
 +
 [source,role="execute"]
 ----
-cd /opt/OpenShift-Virtualization-GitOps-Apps
+cd ~/ocp-virt-gitops-apps
 ----
 
 . Check available branches:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git branch -a | grep {guid}
+git branch -a | grep vms-
 ----
 
 . Check Git status:
@@ -137,44 +135,44 @@ git branch -a | grep {guid}
 git status
 ----
 
-. Ensure you’re on the vms-dev-{guid} branch:
+. Ensure you’re on the vms-dev branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-dev-{guid}
+git checkout vms-dev
 ----
 
-*Expected Result*: You should be on vms-dev-{guid} branch with no
+*Expected Result*: You should be on vms-dev branch with no
 uncommitted changes
 
 === Step 3: Promote Development Changes to Homologation
 
 . Checkout homologation branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-hml-{guid}
+git checkout vms-hml
 ----
 
 . Merge development branch into homologation:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git merge vms-dev-{guid}
+git merge vms-dev
 ----
 
 . Push the changes:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-hml-{guid}
+git push origin vms-hml
 ----
 
 . Force ArgoCD to detect and sync the changes:
 +
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}' &>/dev/null
+oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
 ----
 
 . Verify the VM was created in homologation:
@@ -191,30 +189,30 @@ environment
 
 . Checkout production branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-prd-{guid}
+git checkout vms-prd
 ----
 
 . Merge homologation branch into production:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git merge vms-hml-{guid}
+git merge vms-hml
 ----
 
 . Push the changes:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-prd-{guid}
+git push origin vms-prd
 ----
 
 . Force ArgoCD to detect and sync the changes:
 +
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}' &>/dev/null
+oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
 ----
 
 . Verify the VM was created in production:
@@ -336,7 +334,7 @@ oc get vm -n workshop-gitops-vms-prd | grep vm-web-09
 +
 [source,role="execute"]
 ----
-cd /opt/OpenShift-Virtualization-GitOps-Apps && git log --oneline -1
+cd ~/ocp-virt-gitops-apps && git log --oneline -1
 ----
 
 == Cleanup
@@ -347,14 +345,14 @@ To clean up the resources created in this demo:
 +
 [source,role="execute"]
 ----
-cd /opt/OpenShift-Virtualization-GitOps-Apps
+cd ~/ocp-virt-gitops-apps
 ----
 
 . Checkout development branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-dev-{guid}
+git checkout vms-dev
 ----
 
 . Remove the VM file:
@@ -380,51 +378,51 @@ git commit -m "Remove vm-web-09 from development"
 
 . Push to development branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-dev-{guid}
+git push origin vms-dev
 ----
 
 . Checkout homologation branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-hml-{guid}
+git checkout vms-hml
 ----
 
 . Merge development into homologation:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git merge vms-dev-{guid} -m "Remove vm-web-09 from homologation"
+git merge vms-dev -m "Remove vm-web-09 from homologation"
 ----
 
 . Push to homologation branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-hml-{guid}
+git push origin vms-hml
 ----
 
 . Checkout production branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-prd-{guid}
+git checkout vms-prd
 ----
 
 . Merge homologation into production:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git merge vms-hml-{guid} -m "Remove vm-web-09 from production"
+git merge vms-hml -m "Remove vm-web-09 from production"
 ----
 
 . Push to production branch:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-prd-{guid}
+git push origin vms-prd
 ----
 
 Wait for ArgoCD to sync and remove the VMs from all environments through

@@ -6,13 +6,46 @@
 
 This lab is pre-provisioned. OpenShift Virtualization, OpenShift GitOps (Argo CD), namespaces, and Argo CD Applications are already installed. You do not need to run any installation scripts.
 
-Confirm the environment GUID and that the Showroom terminal can reach the cluster:
+Verify cluster access from the Showroom terminal:
+
+[source,role="execute"]
+----
+oc whoami
+oc get applications -n openshift-gitops
+----
+
+== Clone the Apps Git repository
+
+Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home directory (there is no `/opt/...` checkout in this lab).
 
 [source,subs="attributes+",role="execute"]
 ----
-export GUID={guid}
-echo $GUID
-oc whoami
+cd ~
+git clone https://{gitea_user}:{gitea_password}@gitea.{openshift_cluster_ingress_domain}/{gitea_user}/ocp-virt-gitops-apps.git
+cd ~/ocp-virt-gitops-apps
+git remote -v
+git branch -a
+----
+
+Credentials (also available in lab userdata):
+
+* *Gitea URL*: `{gitea_console_url}`
+* *User*: `{gitea_user}`
+* *Password*: `{gitea_password}`
+* *Repo*: `{gitea_console_url}/{gitea_user}/ocp-virt-gitops-apps`
+
+Working branches (no GUID suffix):
+
+* `vms-dev` -- development
+* `vms-hml` -- homologation
+* `vms-prd` -- production
+
+If the clone already exists, reuse it:
+
+[source,role="execute"]
+----
+cd ~/ocp-virt-gitops-apps
+git fetch --all
 ----
 
 == Environment verification
@@ -50,7 +83,7 @@ workshop-gitops-vms-prd     prd-vm-web-01   Running
 workshop-gitops-vms-prd     prd-vm-web-02   Running
 ----
 
-If an Application shows `OutOfSync` or `Missing`, sync it from the OpenShift GitOps UI or with:
+If an Application shows `OutOfSync` or `Missing`, sync it:
 
 [source,role="execute"]
 ----

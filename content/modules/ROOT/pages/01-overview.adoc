@@ -2,14 +2,14 @@
 :source-highlighter: rouge
 
 
-This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (ArgoCD).
+This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == Learning objectives
 
 After completing this workshop, participants will understand:
 
 * How to implement GitOps for VM management
-* ArgoCD configuration and application management
+* Argo CD configuration and application management
 * Git-based workflow for infrastructure changes
 * Manual drift detection and correction
 * Disaster recovery using GitOps principles
@@ -21,15 +21,19 @@ After completing this workshop, participants will understand:
 
 == Architecture
 
-The lab already deploys OpenShift GitOps Applications that sync VM manifests from the Apps Git repository (Gitea) using Kustomize overlays per environment.
+The lab already deploys OpenShift GitOps Applications that sync VM manifests from the Apps Git repository on Gitea using Kustomize overlays per environment.
 
 [source,text,subs="attributes+"]
 ----
 Apps Repository (Gitea)
-├── Branches
-│   ├── vms-prd-{guid} → overlays/prd → namespace workshop-gitops-vms-prd
-│   ├── vms-hml-{guid} → overlays/hml → namespace workshop-gitops-vms-hml
-│   └── vms-dev-{guid} → overlays/dev → namespace workshop-gitops-vms-dev
+  {gitea_console_url}/{gitea_user}/ocp-virt-gitops-apps
+
+Branches
+├── vms-prd → overlays/prd → namespace workshop-gitops-vms-prd
+├── vms-hml → overlays/hml → namespace workshop-gitops-vms-hml
+└── vms-dev → overlays/dev → namespace workshop-gitops-vms-dev
+
+Kustomize layout
 ├── base/ (shared VM templates)
 │   ├── vm-web-01.yaml
 │   ├── vm-web-02.yaml
@@ -40,30 +44,32 @@ Apps Repository (Gitea)
     └── prd/
 
 Argo CD Applications (pre-installed)
-├── workshop-gitops-vms-prd
-├── workshop-gitops-vms-hml
-└── workshop-gitops-vms-dev
+├── workshop-gitops-vms-prd  (branch vms-prd)
+├── workshop-gitops-vms-hml  (branch vms-hml)
+└── workshop-gitops-vms-dev  (branch vms-dev)
 ----
+
+Automatic sync is disabled. After you push Git changes, refresh/sync the Application manually in Argo CD (or with `oc patch`).
 
 == Workshop environments
 
 The lab provides three environments with different resource allocations.
 
-=== Development environment (`vms-dev-{guid}` branch)
+=== Development environment (`vms-dev` branch)
 
 * *Namespace*: `workshop-gitops-vms-dev`
 * *VMs*: `dev-vm-web-01`, `dev-vm-web-02`
 * *Resources*: 2 CPU, 2GB RAM, 30GB disk per VM
 * *Purpose*: Development and testing
 
-=== Homologation environment (`vms-hml-{guid}` branch)
+=== Homologation environment (`vms-hml` branch)
 
 * *Namespace*: `workshop-gitops-vms-hml`
 * *VMs*: `hml-vm-web-01`, `hml-vm-web-02`
 * *Resources*: 2 CPU, 4GB RAM, 30GB disk per VM
 * *Purpose*: Pre-production testing
 
-=== Production environment (`vms-prd-{guid}` branch)
+=== Production environment (`vms-prd` branch)
 
 * *Namespace*: `workshop-gitops-vms-prd`
 * *VMs*: `prd-vm-web-01`, `prd-vm-web-02`

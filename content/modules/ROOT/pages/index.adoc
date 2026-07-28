@@ -2,14 +2,14 @@
 :source-highlighter: rouge
 
 
-This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (ArgoCD).
+This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == How to use this guide
 
 Follow the modules in order. Each demo builds on the previous one.
 
 . xref:01-overview.adoc[Workshop Overview] -- learning objectives, architecture, and environments
-. xref:02-details.adoc[Workshop Details] -- verify the pre-provisioned lab and demo summaries
+. xref:02-details.adoc[Workshop Details] -- verify the pre-provisioned lab, clone the Apps repo, and demo summaries
 . xref:03-demo-01-manual-change.adoc[Demo 1] -- manual change detection and drift correction
 . xref:04-demo-02-vm-recovery.adoc[Demo 2] -- VM recovery from data loss
 . xref:05-demo-03-add-development-vm.adoc[Demo 3] -- adding a new development VM via Git
@@ -18,15 +18,9 @@ Follow the modules in order. Each demo builds on the previous one.
 . xref:08-troubleshooting.adoc[Troubleshooting] -- monitoring and common issues
 . xref:99-conclusion.adoc[Cleanup] -- demo reset notes and best practices
 
-== Environment GUID
+== Lab identity
 
-Your environment GUID is `{guid}`. Use it when checking out Git branches such as `vms-dev-{guid}`.
-
-[source,subs="attributes+",role="execute"]
-----
-export GUID={guid}
-echo $GUID
-----
+Your lab GUID is `{guid}`. It identifies this environment. Git branches for VMs do **not** include the GUID -- they are `vms-dev`, `vms-hml`, and `vms-prd`.
 
 == OpenShift CLI access
 
@@ -43,4 +37,4 @@ oc get applications -n openshift-gitops
 
 == Next steps
 
-Start with the xref:01-overview.adoc[Workshop Overview].
+Start with the xref:01-overview.adoc[Workshop Overview], then clone the Apps repository in xref:02-details.adoc[Workshop Details].

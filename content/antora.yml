@@ -16,3 +16,7 @@ asciidoc:
     ssh_user: lab-user
     openshift_console_url: https://console-openshift-console.apps.cluster-abc123.ocpv00.rhdp.net
     openshift_cluster_ingress_domain: apps.cluster-abc123.ocpv00.rhdp.net
+    gitea_console_url: https://gitea.apps.cluster-abc123.ocpv00.rhdp.net
+    gitea_user: user1
+    gitea_password: password
+    openshift_gitops_server: https://openshift-gitops-server-openshift-gitops.apps.cluster-abc123.ocpv00.rhdp.net

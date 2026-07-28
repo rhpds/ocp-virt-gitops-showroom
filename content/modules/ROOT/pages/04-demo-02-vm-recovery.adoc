@@ -12,7 +12,6 @@ through manual sync operations.
 
 == Prerequisites
 
-* GUID environment variable set (`export GUID={guid}`)
 * Access to the Showroom terminal (already authenticated to the cluster)
 * Development environment VMs available (`workshop-gitops-vms-dev`)
 
@@ -32,7 +31,6 @@ configuration
 
 == Environment Details
 
-* *GUID*: Dynamic based on environment variable
 * *Namespace*: `workshop-gitops-vms-dev`
 * *VM Name*: `dev-vm-web-02`
 * *ArgoCD Application*: `workshop-gitops-vms-dev`
@@ -164,7 +162,7 @@ oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argo
 +
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}' &>/dev/null
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' &>/dev/null
 ----
 
 . Monitor the sync process:

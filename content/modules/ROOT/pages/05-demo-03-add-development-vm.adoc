@@ -11,9 +11,8 @@ through manual sync operations without direct OpenShift intervention.
 
 == Prerequisites
 
-* GUID environment variable set (`export GUID={guid}`)
 * Access to the Showroom terminal (already authenticated to the cluster)
-* Access to the Apps Git repository (Gitea) for clone, commit, and push
+* Apps repository cloned as described in xref:02-details.adoc[Workshop Details] (`~/ocp-virt-gitops-apps`)
 
 == What the Demo Does
 
@@ -33,12 +32,11 @@ operational
 
 == Environment Details
 
-* *GUID*: Dynamic based on environment variable
 * *Namespace*: `workshop-gitops-vms-dev`
 * *New VM Name*: `dev-vm-web-09`
-* *ArgoCD Application*: `workshop-gitops-vms-dev`
-* *Git Repository*: `OpenShift-Virtualization-GitOps-Apps` – *Target
-Branch*: `vms-dev-{guid}` (GUID-specific development branch)
+* *Argo CD Application*: `workshop-gitops-vms-dev`
+* *Git Repository*: `~/ocp-virt-gitops-apps` (Gitea)
+* *Target Branch*: `vms-dev`
 
 == Step-by-Step Manual Instructions
 
@@ -70,11 +68,11 @@ vm-web-02, vm-web-03), and dev-vm-web-09 should not exist
 
 === Step 2: Navigate to Git Repository
 
-. Change to your Git repository directory:
+. Change to your Git repository directory (clone first if needed -- see xref:02-details.adoc[Workshop Details]):
 +
 [source,role="execute"]
 ----
-cd /opt/OpenShift-Virtualization-GitOps-Apps
+cd ~/ocp-virt-gitops-apps
 ----
 
 . Ensure you’re on the correct branch:
@@ -84,22 +82,21 @@ cd /opt/OpenShift-Virtualization-GitOps-Apps
 git branch --show-current
 ----
 
-. Switch to vms-dev-{guid} branch if needed:
+. Switch to the `vms-dev` branch if needed:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git checkout vms-dev-{guid}
+git checkout vms-dev
 ----
 
 . Pull latest changes:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git pull origin vms-dev-{guid}
+git pull origin vms-dev
 ----
 
-*Expected Result*: You should be on the `vms-dev-{guid}` branch with
-latest changes
+*Expected Result*: You should be on the `vms-dev` branch with the latest changes
 
 === Step 3: Create New VM Definition
 
@@ -273,9 +270,9 @@ git commit -m "feat: add development VM web-09 for expanded testing environment
 
 . Push changes to repository:
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-dev-{guid}
+git push origin vms-dev
 ----
 
 . Verify push was successful:
@@ -286,7 +283,7 @@ git log --oneline -1
 ----
 
 *Expected Result*: Changes should be committed and pushed to the
-vms-dev-{guid} branch
+vms-dev branch
 
 === Step 6: Return to OpenShift and Monitor ArgoCD
 
@@ -301,7 +298,7 @@ cd -
 +
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 . Monitor application status until drift is detected:
@@ -319,7 +316,7 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 +
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"sync":{"syncStrategy":{"hook":{}}}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 . Monitor sync progress:
@@ -478,7 +475,7 @@ To remove the new VM after the demo:
 +
 [source,role="execute"]
 ----
-cd /opt/OpenShift-Virtualization-GitOps-Apps
+cd ~/ocp-virt-gitops-apps
 ----
 
 . Delete the VM file:
@@ -500,7 +497,7 @@ git add -A
 git commit -m "cleanup: remove demo VM web-09"
 ----
 +
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
-git push origin vms-dev-{guid}
+git push origin vms-dev
 ----
