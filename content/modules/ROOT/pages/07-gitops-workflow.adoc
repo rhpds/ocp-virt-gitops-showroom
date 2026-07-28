@@ -8,6 +8,7 @@ If you have not cloned the Apps repo yet, follow xref:02-details.adoc[Workshop D
 
 [source,role="execute"]
 ----
+# Enter the Apps repository
 cd ~/ocp-virt-gitops-apps
 ----
 
@@ -15,6 +16,7 @@ cd ~/ocp-virt-gitops-apps
 
 [source,role="execute"]
 ----
+# Switch to the development branch
 git checkout vms-dev
 ----
 
@@ -22,16 +24,19 @@ Make changes to base templates or overlays, then commit and push:
 
 [source,role="execute"]
 ----
+# Stage all changes
 git add .
 ----
-+
+
 [source,role="execute"]
 ----
+# Commit the configuration update
 git commit -m "Update VM configuration"
 ----
-+
+
 [source,role="execute"]
 ----
+# Push changes to the development branch
 git push origin vms-dev
 ----
 
@@ -41,16 +46,19 @@ After the push, sync the Argo CD Application `workshop-gitops-vms-dev` (automati
 
 [source,role="execute"]
 ----
+# Switch to the homologation branch
 git checkout vms-hml
 ----
-+
+
 [source,role="execute"]
 ----
+# Merge development into homologation
 git merge vms-dev
 ----
-+
+
 [source,role="execute"]
 ----
+# Push changes to the homologation branch
 git push origin vms-hml
 ----
 
@@ -60,16 +68,19 @@ Then sync `workshop-gitops-vms-hml`.
 
 [source,role="execute"]
 ----
+# Switch to the production branch
 git checkout vms-prd
 ----
-+
+
 [source,role="execute"]
 ----
+# Merge homologation into production
 git merge vms-hml
 ----
-+
+
 [source,role="execute"]
 ----
+# Push changes to the production branch
 git push origin vms-prd
 ----
 
@@ -81,6 +92,7 @@ VMs are automatically configured with SSH key access:
 
 [source,role="execute"]
 ----
+# Open an SSH session to a VM (replace <vm-name>)
 virtctl ssh cloud-user@<vm-name>
 ----
 
@@ -88,6 +100,7 @@ Example for the development web VM:
 
 [source,role="execute"]
 ----
+# SSH into the development web VM
 virtctl ssh cloud-user@dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -97,16 +110,19 @@ Each environment exposes VM services for external access:
 
 [source,role="execute"]
 ----
+# List services in the development namespace
 oc get svc -n workshop-gitops-vms-dev
 ----
-+
+
 [source,role="execute"]
 ----
+# List services in the homologation namespace
 oc get svc -n workshop-gitops-vms-hml
 ----
-+
+
 [source,role="execute"]
 ----
+# List services in the production namespace
 oc get svc -n workshop-gitops-vms-prd
 ----
 
@@ -114,10 +130,12 @@ Services target `kubevirt.io/domain` labels. Verify labels:
 
 [source,role="execute"]
 ----
+# Check VM pods for kubevirt.io/domain labels
 oc get pods -n workshop-gitops-vms-dev --show-labels | grep kubevirt.io/domain
 ----
-+
+
 [source,role="execute"]
 ----
+# Inspect the service selector for vm-web-service
 oc get svc vm-web-service -n workshop-gitops-vms-dev -o yaml | grep selector -A 3
 ----

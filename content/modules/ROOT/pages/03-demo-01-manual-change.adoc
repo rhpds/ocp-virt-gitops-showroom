@@ -1,7 +1,6 @@
 = Demo 1: Manual Change Detection and Drift Correction
 :source-highlighter: rouge
 
-
 == Overview
 
 This demo demonstrates how ArgoCD detects manual changes made directly
@@ -38,33 +37,38 @@ state
 === Step 1: Check Current VM State and Application Status
 
 . Check the ArgoCD application status:
-+
+
 [source,role="execute"]
 ----
+# Check the ArgoCD application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
-+
+
 [source,role="execute"]
 ----
+# Check the ArgoCD application health
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.health.status}' ; echo
 ----
 
 . Verify the VM exists and is running:
-+
+
 [source,role="execute"]
 ----
+# Verify the VM exists and is running
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
-+
+
 [source,role="execute"]
 ----
+# Verify the VirtualMachineInstance is running
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
 . Check the current runStrategy (should be `Always`):
-+
+
 [source,role="execute"]
 ----
+# Check the current runStrategy (should be Always)
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
@@ -74,16 +78,18 @@ oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrate
 === Step 2: Make Manual Change to Stop the VM
 
 . Apply a manual change to halt the VM:
-+
+
 [source,role="execute"]
 ----
+# Apply a manual change to halt the VM
 oc patch vm dev-vm-web-01 -n workshop-gitops-vms-dev --type merge -p '{"spec":{"runStrategy":"Halted"}}'
 ----
 
 . Verify the change was applied:
-+
+
 [source,role="execute"]
 ----
+# Verify the change was applied
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
@@ -92,16 +98,18 @@ oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrate
 === Step 3: Wait for VM to Shut Down
 
 . Monitor the VirtualMachineInstance deletion:
-+
+
 [source,role="execute"]
 ----
+# Monitor the VirtualMachineInstance deletion
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
 . Wait for the VMI to be completely removed:
-+
+
 [source,role="execute"]
 ----
+# Wait for the VMI to be completely removed
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -111,16 +119,18 @@ confirming the VM has stopped
 === Step 4: Force ArgoCD to Detect the Drift
 
 . Force application refresh to detect changes:
-+
+
 [source,role="execute"]
 ----
+# Force application refresh to detect changes
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 . Check application status repeatedly until drift is detected:
-+
+
 [source,role="execute"]
 ----
+# Check application status repeatedly until drift is detected
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.status.sync.status}' ; echo
 ----
 
@@ -129,23 +139,26 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 === Step 5: Verify Configuration Restoration
 
 . Check that the runStrategy has been reverted:
-+
+
 [source,role="execute"]
 ----
+# Check that the runStrategy has been reverted
 oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.spec.runStrategy}' ; echo
 ----
 
 . Wait for the VM to start again:
-+
+
 [source,role="execute"]
 ----
+# Wait for the VM to start again
 watch oc get vm dev-vm-web-01 -n workshop-gitops-vms-dev -o jsonpath='{.status.printableStatus}'
 ----
 
 . Verify the VirtualMachineInstance is running:
-+
+
 [source,role="execute"]
 ----
+# Verify the VirtualMachineInstance is running
 oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
@@ -158,16 +171,18 @@ oc get vmi dev-vm-web-01 -n workshop-gitops-vms-dev
 === Step 6: Final Verification
 
 . Check final application status:
-+
+
 [source,role="execute"]
 ----
+# Check final application status
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o custom-columns="NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status"
 ----
 
 . List all VMs in the development environment:
-+
+
 [source,role="execute"]
 ----
+# List all VMs in the development environment
 oc get vm -n workshop-gitops-vms-dev
 ----
 

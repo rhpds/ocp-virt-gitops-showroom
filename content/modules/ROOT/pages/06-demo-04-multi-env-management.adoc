@@ -1,7 +1,6 @@
 = Demo 4: Multi-Environment VM Management with Kustomize
 :source-highlighter: rouge
 
-
 == Overview
 
 This demo demonstrates advanced GitOps practices for managing Virtual
@@ -61,51 +60,58 @@ enhanced monitoring
 === Step 1: Verify Current State
 
 . Check all ArgoCD applications status:
-+
+
 [source,role="execute"]
 ----
+# Check all ArgoCD applications status
 oc get applications -n openshift-gitops | grep workshop-gitops-vms
 ----
 
 . List VMs in development environment:
-+
+
 [source,role="execute"]
 ----
+# List VMs in development environment
 oc get vm -n workshop-gitops-vms-dev | grep -E "(NAME|vm-web)"
 ----
 
 . List VMs in homologation environment:
-+
+
 [source,role="execute"]
 ----
+# List VMs in homologation environment
 oc get vm -n workshop-gitops-vms-hml | grep -E "(NAME|vm-web)"
 ----
 
 . List VMs in production environment:
-+
+
 [source,role="execute"]
 ----
+# List VMs in production environment
 oc get vm -n workshop-gitops-vms-prd | grep -E "(NAME|vm-web)"
 ----
 
 . Verify that dev-vm-web-09 exists in development:
-+
+
 [source,role="execute"]
 ----
+# Verify that dev-vm-web-09 exists in development
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev --no-headers 2>/dev/null || echo "Not found"
 ----
 
 . Verify that hml-vm-web-09 does not exist in homologation (expected):
-+
+
 [source,role="execute"]
 ----
+# Verify that hml-vm-web-09 does not exist in homologation (expected)
 oc get vm hml-vm-web-09 -n workshop-gitops-vms-hml --no-headers 2>/dev/null || echo "Not found (expected)"
 ----
 
 . Verify that prd-vm-web-09 does not exist in production (expected):
-+
+
 [source,role="execute"]
 ----
+# Verify that prd-vm-web-09 does not exist in production (expected)
 oc get vm prd-vm-web-09 -n workshop-gitops-vms-prd --no-headers 2>/dev/null || echo "Not found (expected)"
 ----
 
@@ -115,30 +121,34 @@ environment
 === Step 2: Navigate to Git Repository and Check Branches
 
 . Change to your Git repository directory (clone first if needed -- see xref:02-details.adoc[Workshop Details]):
-+
+
 [source,role="execute"]
 ----
+# Change to your Git repository directory
 cd ~/ocp-virt-gitops-apps
 ----
 
 . Check available branches:
-+
+
 [source,role="execute"]
 ----
+# Check available branches
 git branch -a | grep vms-
 ----
 
 . Check Git status:
-+
+
 [source,role="execute"]
 ----
+# Check Git status
 git status
 ----
 
 . Ensure you’re on the vms-dev branch:
-+
+
 [source,role="execute"]
 ----
+# Ensure you’re on the vms-dev branch
 git checkout vms-dev
 ----
 
@@ -148,37 +158,42 @@ uncommitted changes
 === Step 3: Promote Development Changes to Homologation
 
 . Checkout homologation branch:
-+
+
 [source,role="execute"]
 ----
+# Checkout homologation branch
 git checkout vms-hml
 ----
 
 . Merge development branch into homologation:
-+
+
 [source,role="execute"]
 ----
+# Merge development branch into homologation
 git merge vms-dev
 ----
 
 . Push the changes:
-+
+
 [source,role="execute"]
 ----
+# Push the changes
 git push origin vms-hml
 ----
 
 . Force ArgoCD to detect and sync the changes:
-+
+
 [source,role="execute"]
 ----
+# Force ArgoCD to detect and sync the changes
 oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
 ----
 
 . Verify the VM was created in homologation:
-+
+
 [source,role="execute"]
 ----
+# Verify the VM was created in homologation
 watch "oc get vm -n workshop-gitops-vms-hml | grep hml-vm-web-09"
 ----
 
@@ -188,37 +203,42 @@ environment
 === Step 4: Promote Homologation Changes to Production
 
 . Checkout production branch:
-+
+
 [source,role="execute"]
 ----
+# Checkout production branch
 git checkout vms-prd
 ----
 
 . Merge homologation branch into production:
-+
+
 [source,role="execute"]
 ----
+# Merge homologation branch into production
 git merge vms-hml
 ----
 
 . Push the changes:
-+
+
 [source,role="execute"]
 ----
+# Push the changes
 git push origin vms-prd
 ----
 
 . Force ArgoCD to detect and sync the changes:
-+
+
 [source,role="execute"]
 ----
+# Force ArgoCD to detect and sync the changes
 oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
 ----
 
 . Verify the VM was created in production:
-+
+
 [source,role="execute"]
 ----
+# Verify the VM was created in production
 watch "oc get vm -n workshop-gitops-vms-prd | grep prd-vm-web-09"
 ----
 
@@ -228,44 +248,50 @@ environment
 === Step 5: Verify Multi-Environment Deployment
 
 . Check dev-vm-web-09 in development:
-+
+
 [source,role="execute"]
 ----
+# Check dev-vm-web-09 in development
 oc get vm dev-vm-web-09 -n workshop-gitops-vms-dev --no-headers 2>/dev/null || echo "Not found"
 ----
 
 . Check hml-vm-web-09 in homologation:
-+
+
 [source,role="execute"]
 ----
+# Check hml-vm-web-09 in homologation
 oc get vm hml-vm-web-09 -n workshop-gitops-vms-hml --no-headers 2>/dev/null || echo "Not found"
 ----
 
 . Check prd-vm-web-09 in production:
-+
+
 [source,role="execute"]
 ----
+# Check prd-vm-web-09 in production
 oc get vm prd-vm-web-09 -n workshop-gitops-vms-prd --no-headers 2>/dev/null || echo "Not found"
 ----
 
 . Check development configuration using Kustomize:
-+
+
 [source,role="execute"]
 ----
+# Check development configuration using Kustomize
 oc kustomize overlays/dev | grep -A 5 -B 5 "vm-web-09"
 ----
 
 . Check homologation configuration using Kustomize:
-+
+
 [source,role="execute"]
 ----
+# Check homologation configuration using Kustomize
 oc kustomize overlays/hml | grep -A 5 -B 5 "vm-web-09"
 ----
 
 . Check production configuration using Kustomize:
-+
+
 [source,role="execute"]
 ----
+# Check production configuration using Kustomize
 oc kustomize overlays/prd | grep -A 5 -B 5 "vm-web-09"
 ----
 
@@ -303,37 +329,42 @@ manage environment differences
 == Verification Commands
 
 . Check all ArgoCD applications:
-+
+
 [source,role="execute"]
 ----
+# Check all ArgoCD applications
 oc get applications -n openshift-gitops
 ----
 
 . Check VM status in development:
-+
+
 [source,role="execute"]
 ----
+# Check VM status in development
 oc get vm -n workshop-gitops-vms-dev | grep vm-web-09
 ----
 
 . Check VM status in homologation:
-+
+
 [source,role="execute"]
 ----
+# Check VM status in homologation
 oc get vm -n workshop-gitops-vms-hml | grep vm-web-09
 ----
 
 . Check VM status in production:
-+
+
 [source,role="execute"]
 ----
+# Check VM status in production
 oc get vm -n workshop-gitops-vms-prd | grep vm-web-09
 ----
 
 . Check Git branch status:
-+
+
 [source,role="execute"]
 ----
+# Check Git branch status
 cd ~/ocp-virt-gitops-apps && git log --oneline -1
 ----
 
@@ -342,86 +373,98 @@ cd ~/ocp-virt-gitops-apps && git log --oneline -1
 To clean up the resources created in this demo:
 
 . Navigate to the Apps repository:
-+
+
 [source,role="execute"]
 ----
+# Navigate to the Apps repository
 cd ~/ocp-virt-gitops-apps
 ----
 
 . Checkout development branch:
-+
+
 [source,role="execute"]
 ----
+# Checkout development branch
 git checkout vms-dev
 ----
 
 . Remove the VM file:
-+
+
 [source,role="execute"]
 ----
+# Remove the VM file
 git rm base/vm-web-09.yaml
 ----
 
 . Remove VM from kustomization:
-+
+
 [source,role="execute"]
 ----
+# Remove VM from kustomization
 sed -i '/vm-web-09.yaml/d' base/kustomization.yaml
 ----
 
 . Commit the changes:
-+
+
 [source,role="execute"]
 ----
+# Commit the changes
 git commit -m "Remove vm-web-09 from development"
 ----
 
 . Push to development branch:
-+
+
 [source,role="execute"]
 ----
+# Push to development branch
 git push origin vms-dev
 ----
 
 . Checkout homologation branch:
-+
+
 [source,role="execute"]
 ----
+# Checkout homologation branch
 git checkout vms-hml
 ----
 
 . Merge development into homologation:
-+
+
 [source,role="execute"]
 ----
+# Merge development into homologation
 git merge vms-dev -m "Remove vm-web-09 from homologation"
 ----
 
 . Push to homologation branch:
-+
+
 [source,role="execute"]
 ----
+# Push to homologation branch
 git push origin vms-hml
 ----
 
 . Checkout production branch:
-+
+
 [source,role="execute"]
 ----
+# Checkout production branch
 git checkout vms-prd
 ----
 
 . Merge homologation into production:
-+
+
 [source,role="execute"]
 ----
+# Merge homologation into production
 git merge vms-hml -m "Remove vm-web-09 from production"
 ----
 
 . Push to production branch:
-+
+
 [source,role="execute"]
 ----
+# Push to production branch
 git push origin vms-prd
 ----
 

@@ -10,16 +10,19 @@ Log in as the lab admin from the Showroom terminal (required before `oc` command
 
 [source,subs="attributes+",role="execute"]
 ----
+# Log in as the lab cluster admin
 oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' --server={openshift_api_server_url} --insecure-skip-tls-verify=true
 ----
-+
+
 [source,role="execute"]
 ----
+# Confirm the current OpenShift user
 oc whoami
 ----
-+
+
 [source,role="execute"]
 ----
+# List Argo CD Applications for the workshop
 oc get applications -n openshift-gitops
 ----
 
@@ -29,26 +32,31 @@ Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home
 
 [source,role="execute"]
 ----
+# Go to your home directory
 cd ~
 ----
-+
+
 [source,subs="attributes+",role="execute"]
 ----
+# Clone the Apps repository from Gitea
 git clone https://{gitea_user}:{gitea_password}@gitea.{openshift_cluster_ingress_domain}/{gitea_user}/ocp-virt-gitops-apps.git
 ----
-+
+
 [source,role="execute"]
 ----
+# Enter the Apps repository
 cd ~/ocp-virt-gitops-apps
 ----
-+
+
 [source,role="execute"]
 ----
+# Show configured Git remotes
 git remote -v
 ----
-+
+
 [source,role="execute"]
 ----
+# List local and remote branches
 git branch -a
 ----
 
@@ -69,11 +77,13 @@ If the clone already exists, reuse it:
 
 [source,role="execute"]
 ----
+# Enter the existing Apps repository
 cd ~/ocp-virt-gitops-apps
 ----
-+
+
 [source,role="execute"]
 ----
+# Fetch latest changes from all remotes
 git fetch --all
 ----
 
@@ -83,21 +93,25 @@ Verify Argo CD Applications and VMs are present:
 
 [source,role="execute"]
 ----
+# List Argo CD Applications
 oc get applications -n openshift-gitops
 ----
-+
+
 [source,role="execute"]
 ----
+# List VMs in the development namespace
 oc get vms -n workshop-gitops-vms-dev
 ----
-+
+
 [source,role="execute"]
 ----
+# List VMs in the homologation namespace
 oc get vms -n workshop-gitops-vms-hml
 ----
-+
+
 [source,role="execute"]
 ----
+# List VMs in the production namespace
 oc get vms -n workshop-gitops-vms-prd
 ----
 
@@ -128,16 +142,19 @@ If an Application shows `OutOfSync` or `Missing`, sync each one:
 
 [source,role="execute"]
 ----
+# Sync the development Argo CD Application
 oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
-+
+
 [source,role="execute"]
 ----
+# Sync the homologation Argo CD Application
 oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
-+
+
 [source,role="execute"]
 ----
+# Sync the production Argo CD Application
 oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
