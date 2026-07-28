@@ -10,9 +10,16 @@ Log in as the lab admin from the Showroom terminal (required before `oc` command
 
 [source,subs="attributes+",role="execute"]
 ----
-oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' \
-  --server={openshift_api_server_url} --insecure-skip-tls-verify=true
+oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' --server={openshift_api_server_url} --insecure-skip-tls-verify=true
+----
++
+[source,role="execute"]
+----
 oc whoami
+----
++
+[source,role="execute"]
+----
 oc get applications -n openshift-gitops
 ----
 
@@ -20,12 +27,28 @@ oc get applications -n openshift-gitops
 
 Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home directory (there is no `/opt/...` checkout in this lab).
 
-[source,subs="attributes+",role="execute"]
+[source,role="execute"]
 ----
 cd ~
+----
++
+[source,subs="attributes+",role="execute"]
+----
 git clone https://{gitea_user}:{gitea_password}@gitea.{openshift_cluster_ingress_domain}/{gitea_user}/ocp-virt-gitops-apps.git
+----
++
+[source,role="execute"]
+----
 cd ~/ocp-virt-gitops-apps
+----
++
+[source,role="execute"]
+----
 git remote -v
+----
++
+[source,role="execute"]
+----
 git branch -a
 ----
 
@@ -47,6 +70,10 @@ If the clone already exists, reuse it:
 [source,role="execute"]
 ----
 cd ~/ocp-virt-gitops-apps
+----
++
+[source,role="execute"]
+----
 git fetch --all
 ----
 
@@ -57,8 +84,20 @@ Verify Argo CD Applications and VMs are present:
 [source,role="execute"]
 ----
 oc get applications -n openshift-gitops
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-dev
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-hml
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-prd
 ----
 
@@ -85,14 +124,21 @@ workshop-gitops-vms-prd     prd-vm-web-01   Running
 workshop-gitops-vms-prd     prd-vm-web-02   Running
 ----
 
-If an Application shows `OutOfSync` or `Missing`, sync it:
+If an Application shows `OutOfSync` or `Missing`, sync each one:
 
 [source,role="execute"]
 ----
-for app in workshop-gitops-vms-dev workshop-gitops-vms-hml workshop-gitops-vms-prd; do
-  oc patch applications "$app" -n openshift-gitops --type merge \
-    -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
-done
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+----
++
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+----
++
+[source,role="execute"]
+----
+oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 == Workshop demonstrations

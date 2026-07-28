@@ -9,8 +9,20 @@ Check Argo CD Applications and VMs across environments:
 [source,role="execute"]
 ----
 oc get applications -n openshift-gitops
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-dev
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-hml
+----
++
+[source,role="execute"]
+----
 oc get vms -n workshop-gitops-vms-prd
 ----
 
@@ -21,7 +33,15 @@ oc get vms -n workshop-gitops-vms-prd
 [source,role="execute"]
 ----
 oc get secret workshop-gitops-vms-dev -n workshop-gitops-vms-dev
+----
++
+[source,role="execute"]
+----
 oc get secret workshop-gitops-vms-hml -n workshop-gitops-vms-hml
+----
++
+[source,role="execute"]
+----
 oc get secret workshop-gitops-vms-prd -n workshop-gitops-vms-prd
 ----
 
@@ -44,6 +64,10 @@ ssh-keygen -R <vm-ip-or-hostname>
 [source,role="execute"]
 ----
 oc get applications -n openshift-gitops
+----
++
+[source,role="execute"]
+----
 oc describe applications workshop-gitops-vms-dev -n openshift-gitops
 ----
 
@@ -51,8 +75,7 @@ Force application sync if needed:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge \
-  --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
 ----
 
 === Repository access issues
@@ -60,6 +83,10 @@ oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge \
 [source,role="execute"]
 ----
 oc get secret -n openshift-gitops | grep -i repo
+----
++
+[source,role="execute"]
+----
 oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml | grep -A20 source
 ----
 
@@ -84,5 +111,9 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o yaml
 [source,role="execute"]
 ----
 oc get route openshift-gitops-server -n openshift-gitops
+----
++
+[source,role="execute"]
+----
 oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d; echo
 ----

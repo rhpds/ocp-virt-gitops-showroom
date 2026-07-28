@@ -23,7 +23,15 @@ Make changes to base templates or overlays, then commit and push:
 [source,role="execute"]
 ----
 git add .
+----
++
+[source,role="execute"]
+----
 git commit -m "Update VM configuration"
+----
++
+[source,role="execute"]
+----
 git push origin vms-dev
 ----
 
@@ -34,7 +42,15 @@ After the push, sync the Argo CD Application `workshop-gitops-vms-dev` (automati
 [source,role="execute"]
 ----
 git checkout vms-hml
+----
++
+[source,role="execute"]
+----
 git merge vms-dev
+----
++
+[source,role="execute"]
+----
 git push origin vms-hml
 ----
 
@@ -45,7 +61,15 @@ Then sync `workshop-gitops-vms-hml`.
 [source,role="execute"]
 ----
 git checkout vms-prd
+----
++
+[source,role="execute"]
+----
 git merge vms-hml
+----
++
+[source,role="execute"]
+----
 git push origin vms-prd
 ----
 
@@ -74,7 +98,15 @@ Each environment exposes VM services for external access:
 [source,role="execute"]
 ----
 oc get svc -n workshop-gitops-vms-dev
+----
++
+[source,role="execute"]
+----
 oc get svc -n workshop-gitops-vms-hml
+----
++
+[source,role="execute"]
+----
 oc get svc -n workshop-gitops-vms-prd
 ----
 
@@ -83,5 +115,9 @@ Services target `kubevirt.io/domain` labels. Verify labels:
 [source,role="execute"]
 ----
 oc get pods -n workshop-gitops-vms-dev --show-labels | grep kubevirt.io/domain
+----
++
+[source,role="execute"]
+----
 oc get svc vm-web-service -n workshop-gitops-vms-dev -o yaml | grep selector -A 3
 ----

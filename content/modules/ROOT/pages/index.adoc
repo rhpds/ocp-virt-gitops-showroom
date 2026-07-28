@@ -28,8 +28,7 @@ The Showroom terminal starts as a limited service account. Log in as the lab adm
 
 [source,subs="attributes+",role="execute"]
 ----
-oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' \
-  --server={openshift_api_server_url} --insecure-skip-tls-verify=true
+oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' --server={openshift_api_server_url} --insecure-skip-tls-verify=true
 ----
 
 Verify access:
@@ -37,6 +36,10 @@ Verify access:
 [source,role="execute"]
 ----
 oc whoami
+----
++
+[source,role="execute"]
+----
 oc get applications -n openshift-gitops
 ----
 
