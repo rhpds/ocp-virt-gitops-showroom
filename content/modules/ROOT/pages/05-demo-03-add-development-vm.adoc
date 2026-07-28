@@ -11,7 +11,7 @@ through manual sync operations without direct OpenShift intervention.
 
 == Prerequisites
 
-* Access to the Showroom terminal (already authenticated to the cluster)
+* Access to the Showroom terminal (log in with `oc login` from the Home page first)
 * Apps repository cloned as described in xref:02-details.adoc[Workshop Details] (`~/ocp-virt-gitops-apps`)
 
 == What the Demo Does

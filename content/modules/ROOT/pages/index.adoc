@@ -24,8 +24,13 @@ Your lab GUID is `{guid}`. It identifies this environment. Git branches for VMs 
 
 == OpenShift CLI access
 
-The Showroom terminal on the right is already authenticated to this cluster.
-Click any command block marked for execution -- you do not need to run `oc login` first.
+The Showroom terminal starts as a limited service account. Log in as the lab admin before running workshop commands:
+
+[source,subs="attributes+",role="execute"]
+----
+oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' \
+  --server={openshift_api_server_url} --insecure-skip-tls-verify=true
+----
 
 Verify access:
 
@@ -34,6 +39,8 @@ Verify access:
 oc whoami
 oc get applications -n openshift-gitops
 ----
+
+Expected: `oc whoami` returns `{openshift_cluster_admin_username}`, and the Applications list shows `workshop-gitops-vms-dev`, `workshop-gitops-vms-hml`, and `workshop-gitops-vms-prd`.
 
 == Next steps
 

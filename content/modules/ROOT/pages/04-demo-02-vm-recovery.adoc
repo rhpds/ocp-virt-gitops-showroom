@@ -12,7 +12,7 @@ through manual sync operations.
 
 == Prerequisites
 
-* Access to the Showroom terminal (already authenticated to the cluster)
+* Access to the Showroom terminal (log in with `oc login` from the Home page first)
 * Development environment VMs available (`workshop-gitops-vms-dev`)
 
 == What the Demo Does

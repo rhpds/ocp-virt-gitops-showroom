@@ -6,10 +6,12 @@
 
 This lab is pre-provisioned. OpenShift Virtualization, OpenShift GitOps (Argo CD), namespaces, and Argo CD Applications are already installed. You do not need to run any installation scripts.
 
-Verify cluster access from the Showroom terminal:
+Log in as the lab admin from the Showroom terminal (required before `oc` commands):
 
-[source,role="execute"]
+[source,subs="attributes+",role="execute"]
 ----
+oc login -u {openshift_cluster_admin_username} -p '{openshift_cluster_admin_password}' \
+  --server={openshift_api_server_url} --insecure-skip-tls-verify=true
 oc whoami
 oc get applications -n openshift-gitops
 ----
