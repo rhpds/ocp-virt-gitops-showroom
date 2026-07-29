@@ -7,6 +7,8 @@ This workshop demonstrates how to implement GitOps principles for managing Virtu
 
 Follow the modules in order. Each demo builds on the previous one.
 
+**Before any demo**, complete the required setup on this page (`oc login` and `git config`) and xref:02-details.adoc[Workshop Details] (Application sync and Apps repo clone).
+
 . xref:01-overview.adoc[Workshop Overview] -- learning objectives, architecture, and environments
 . xref:02-details.adoc[Workshop Details] -- verify the pre-provisioned lab, clone the Apps repo, and demo summaries
 . xref:03-demo-01-manual-change.adoc[Demo 1] -- manual change detection and drift correction
@@ -19,7 +21,7 @@ Follow the modules in order. Each demo builds on the previous one.
 
 == Lab identity
 
-Your lab GUID is `{guid}`. It identifies this environment. Git branches for VMs do **not** include the GUID -- they are `vms-dev`, `vms-hml`, and `vms-prd`.
+Your lab GUID is `{guid}`. It identifies this environment. Git branches for VMs are `vms-dev`, `vms-hml`, and `vms-prd`.
 
 == OpenShift CLI access
 
@@ -46,6 +48,24 @@ oc get applications -n openshift-gitops
 
 Expected: `oc whoami` returns `{openshift_cluster_admin_username}`, and the Applications list shows `workshop-gitops-vms-dev`, `workshop-gitops-vms-hml`, and `workshop-gitops-vms-prd`.
 
+== Git author identity (required)
+
+The Showroom terminal has **no** Git `user.name` or `user.email`. Without these, every `git commit` fails and Demo 3 / Demo 4 cannot push. Run both commands once at the start of the lab:
+
+Configure Git user name:
+
+[source,role="execute"]
+----
+git config --global user.name "Lab User"
+----
+
+Configure Git user email:
+
+[source,role="execute"]
+----
+git config --global user.email "lab-user@example.com"
+----
+
 == Next steps
 
-Start with the xref:01-overview.adoc[Workshop Overview], then clone the Apps repository in xref:02-details.adoc[Workshop Details].
+Start with the xref:01-overview.adoc[Workshop Overview], then complete xref:02-details.adoc[Workshop Details] (sync Applications, clone the Apps repo, and check out `vms-dev`).

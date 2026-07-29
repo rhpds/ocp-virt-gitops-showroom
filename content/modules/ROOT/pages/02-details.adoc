@@ -99,6 +99,34 @@ List local and remote branches:
 git branch -a
 ----
 
+[IMPORTANT]
+====
+The Showroom terminal has no Git author identity configured.
+Set it once before any `git commit` in Demo 3 or Demo 4.
+Without this, commits fail and `git push` reports `src refspec vms-dev does not match any`.
+====
+
+Configure Git user name:
+
+[source,role="execute"]
+----
+git config --global user.name "Lab User"
+----
+
+Configure Git user email:
+
+[source,role="execute"]
+----
+git config --global user.email "lab-user@example.com"
+----
+
+Switch to the development branch (do not work on `main`):
+
+[source,role="execute"]
+----
+git checkout vms-dev
+----
+
 Credentials (also available in lab userdata):
 
 * *Gitea URL*: `{gitea_console_url}`

@@ -95,6 +95,18 @@ git checkout vms-dev
 git pull origin vms-dev
 ----
 
+. Configure Git author identity if not set yet (required once per terminal):
+
+[source,role="execute"]
+----
+git config --global user.name "Lab User"
+----
+
+[source,role="execute"]
+----
+git config --global user.email "lab-user@example.com"
+----
+
 *Expected Result*: You should be on the `vms-dev` branch with the latest changes
 
 === Step 3: Create New VM Definition
