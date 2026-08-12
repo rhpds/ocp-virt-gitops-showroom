@@ -1,4 +1,4 @@
-= Workshop Details
+= Demo Details
 :source-highlighter: rouge
 
 == Lab environment
@@ -19,7 +19,7 @@ Confirm the current OpenShift user:
 oc whoami
 ----
 
-List Argo CD Applications for the workshop:
+List Argo CD Applications for the demo:
 
 [source,role="execute"]
 ----
@@ -29,7 +29,7 @@ oc get applications -n openshift-gitops
 [IMPORTANT]
 ====
 At lab start the Argo CD Applications often show `OutOfSync` or `Missing`.
-Automatic sync is disabled in this workshop, so you may need to sync all three Applications now before starting the lab.
+Automatic sync is disabled in this demo, so you may need to sync all three Applications now before starting the lab.
 ====
 
 Sync the development Argo CD Application:
@@ -213,7 +213,7 @@ If any Application is still `OutOfSync` or `Missing`, re-run the three sync comm
 
 == Workshop demonstrations
 
-The workshop includes four demonstrations. Follow the step-by-step instructions in each demo module.
+The guide includes four demonstrations. Follow the step-by-step instructions in each demo module.
 
 === Demo 1: Manual change detection and drift correction
 

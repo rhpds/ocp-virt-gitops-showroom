@@ -1,16 +1,16 @@
-= OpenShift Virtualization GitOps Workshop
+= OpenShift Virtualization GitOps Demo
 :source-highlighter: rouge
 
-This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
+This guide demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == How to use this guide
 
 Follow the modules in order. Each demo builds on the previous one.
 
-**Before any demo**, complete the required setup on this page (`oc login` and `git config`) and xref:02-details.adoc[Workshop Details] (Application sync and Apps repo clone).
+**Before any demo**, complete the required setup on this page (`oc login` and `git config`) and xref:02-details.adoc[Details] (Application sync and Apps repo clone).
 
-. xref:01-overview.adoc[Workshop Overview] -- learning objectives, architecture, and environments
-. xref:02-details.adoc[Workshop Details] -- verify the pre-provisioned lab, clone the Apps repo, and demo summaries
+. xref:01-overview.adoc[Overview] -- learning objectives, architecture, and environments
+. xref:02-details.adoc[Details] -- verify the pre-provisioned lab, clone the Apps repo, and demo summaries
 . xref:03-demo-01-manual-change.adoc[Demo 1] -- manual change detection and drift correction
 . xref:04-demo-02-vm-recovery.adoc[Demo 2] -- VM recovery from data loss
 . xref:05-demo-03-add-development-vm.adoc[Demo 3] -- adding a new development VM via Git
@@ -68,4 +68,4 @@ git config --global user.email "lab-user@example.com"
 
 == Next steps
 
-Start with the xref:01-overview.adoc[Workshop Overview], then complete xref:02-details.adoc[Workshop Details] (sync Applications, clone the Apps repo, and check out `vms-dev`).
+Start with the xref:01-overview.adoc[Overview], then complete xref:02-details.adoc[Details] (sync Applications, clone the Apps repo, and check out `vms-dev`).

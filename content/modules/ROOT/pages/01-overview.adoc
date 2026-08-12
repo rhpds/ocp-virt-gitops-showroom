@@ -1,11 +1,11 @@
-= Workshop Overview
+= Demo Overview
 :source-highlighter: rouge
 
-This workshop demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
+This guide demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
 == Learning objectives
 
-After completing this workshop, participants will understand:
+After completing this guide, participants will understand:
 
 * How to implement GitOps for VM management
 * Argo CD configuration and application management
@@ -50,7 +50,7 @@ Argo CD Applications (pre-installed)
 
 Automatic sync is disabled. After you push Git changes, refresh/sync the Application manually in Argo CD (or with `oc patch`).
 
-== Workshop environments
+== Demo environments
 
 The lab provides three environments with different resource allocations.
 

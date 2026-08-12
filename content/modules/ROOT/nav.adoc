@@ -1,8 +1,8 @@
 * xref:index.adoc[Home]
 
 .Getting Started
-* xref:01-overview.adoc[Workshop Overview]
-* xref:02-details.adoc[Workshop Details]
+* xref:01-overview.adoc[Overview]
+* xref:02-details.adoc[Details]
 
 .Demonstrations
 * xref:03-demo-01-manual-change.adoc[Demo 1: Drift Correction]
