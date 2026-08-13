@@ -3,6 +3,37 @@
 
 This guide demonstrates how to implement GitOps principles for managing Virtual Machines (VMs) in OpenShift Virtualization using OpenShift GitOps (Argo CD).
 
+== Environment Information
+
+[cols="1,1",options="header"]
+|===
+| Item | Value
+
+| *OCP Console*
+| {openshift_console_url}
+
+| *Admin Username*
+| {openshift_cluster_admin_username}
+
+| *Admin Password*
+| {openshift_cluster_admin_password}
+
+| *API Server*
+| {openshift_api_server_url}
+
+| *Gitea Console*
+| {gitea_console_url}
+
+| *Gitea User*
+| {gitea_user}
+
+| *Gitea Password*
+| {gitea_password}
+
+| *Lab GUID*
+| {guid}
+|===
+
 == How to use this guide
 
 Follow the modules in order. Each demo builds on the previous one.
@@ -10,7 +41,7 @@ Follow the modules in order. Each demo builds on the previous one.
 **Before any demo**, complete the required setup on this page (`oc login` and `git config`) and xref:02-details.adoc[Details] (Application sync and Apps repo clone).
 
 . xref:01-overview.adoc[Overview] -- learning objectives, architecture, and environments
-. xref:02-details.adoc[Details] -- verify the pre-provisioned lab, clone the Apps repo, and demo summaries
+. xref:02-details.adoc[Details] -- verify the pre-provisioned demo, clone the Apps repo, and demo summaries
 . xref:03-demo-01-manual-change.adoc[Demo 1] -- manual change detection and drift correction
 . xref:04-demo-02-vm-recovery.adoc[Demo 2] -- VM recovery from data loss
 . xref:05-demo-03-add-development-vm.adoc[Demo 3] -- adding a new development VM via Git
@@ -19,13 +50,9 @@ Follow the modules in order. Each demo builds on the previous one.
 . xref:08-troubleshooting.adoc[Troubleshooting] -- monitoring and common issues
 . xref:99-conclusion.adoc[Cleanup] -- demo reset notes and best practices
 
-== Lab identity
-
-Your lab GUID is `{guid}`. It identifies this environment. Git branches for VMs are `vms-dev`, `vms-hml`, and `vms-prd`.
-
 == OpenShift CLI access
 
-The Showroom terminal starts as a limited service account. Log in as the lab admin before running workshop commands:
+Log in as the demo admin from the Showroom terminal before running commands:
 
 [source,subs="attributes+",role="execute"]
 ----
@@ -39,7 +66,7 @@ Confirm the current OpenShift user:
 oc whoami
 ----
 
-List Argo CD Applications for the workshop:
+List Argo CD Applications for the demo:
 
 [source,role="execute"]
 ----
@@ -50,13 +77,13 @@ Expected: `oc whoami` returns `{openshift_cluster_admin_username}`, and the Appl
 
 == Git author identity (required)
 
-The Showroom terminal has **no** Git `user.name` or `user.email`. Without these, every `git commit` fails and Demo 3 / Demo 4 cannot push. Run both commands once at the start of the lab:
+The Showroom terminal has **no** Git `user.name` or `user.email`. Without these, every `git commit` fails and Demo 3 / Demo 4 cannot push. Run both commands once at the start of the demo:
 
 Configure Git user name:
 
 [source,role="execute"]
 ----
-git config --global user.name "Lab User"
+git config --global user.name "lab-user"
 ----
 
 Configure Git user email:
