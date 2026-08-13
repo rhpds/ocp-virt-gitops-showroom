@@ -10,7 +10,7 @@ This guide demonstrates how to implement GitOps principles for managing Virtual 
 | Item | Value
 
 | *OCP Console*
-| {openshift_console_url}
+| {openshift_cluster_console_url}
 
 | *Admin Username*
 | {openshift_cluster_admin_username}
@@ -20,6 +20,9 @@ This guide demonstrates how to implement GitOps principles for managing Virtual 
 
 | *API Server*
 | {openshift_api_server_url}
+
+| *Argo CD Console*
+| {openshift_gitops_server}
 
 | *Gitea Console*
 | {gitea_console_url}
