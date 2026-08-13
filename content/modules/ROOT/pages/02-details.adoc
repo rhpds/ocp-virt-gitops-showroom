@@ -1,11 +1,11 @@
 = Demo Details
 :source-highlighter: rouge
 
-== Lab environment
+== Demo environment
 
-This lab is pre-provisioned. OpenShift Virtualization, OpenShift GitOps (Argo CD), namespaces, and Argo CD Applications are already installed. You do not need to run any installation scripts.
+This demo environment is pre-provisioned. OpenShift Virtualization, OpenShift GitOps (Argo CD), namespaces, and Argo CD Applications are already installed. You do not need to run any installation scripts.
 
-Log in as the lab admin from the Showroom terminal (required before `oc` commands):
+Log in as the demo admin from the Showroom terminal (required before `oc` commands):
 
 [source,subs="attributes+",role="execute"]
 ----
@@ -28,8 +28,8 @@ oc get applications -n openshift-gitops
 
 [IMPORTANT]
 ====
-At lab start the Argo CD Applications often show `OutOfSync` or `Missing`.
-Automatic sync is disabled in this demo, so you may need to sync all three Applications now before starting the lab.
+At demo start the Argo CD Applications often show `OutOfSync` or `Missing`.
+Automatic sync is disabled in this demo, so you may need to sync all three Applications now before starting the demo.
 ====
 
 Sync the development Argo CD Application:
@@ -62,7 +62,7 @@ oc get applications -n openshift-gitops -o custom-columns="NAME:.metadata.name,S
 
 == Clone the Apps Git repository
 
-Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home directory (there is no `/opt/...` checkout in this lab).
+Demos 3 and 4 edit VM manifests in Git. Clone the Gitea Apps repo into your home directory (there is no `/opt/...` checkout in this demo).
 
 Go to your home directory:
 
@@ -110,7 +110,7 @@ Configure Git user name:
 
 [source,role="execute"]
 ----
-git config --global user.name "Lab User"
+git config --global user.name "lab-user"
 ----
 
 Configure Git user email:
@@ -127,7 +127,7 @@ Switch to the development branch (do not work on `main`):
 git checkout vms-dev
 ----
 
-Credentials (also available in lab userdata):
+Credentials (also available in demo userdata):
 
 * *Gitea URL*: `{gitea_console_url}`
 * *User*: `{gitea_user}`
@@ -209,9 +209,9 @@ workshop-gitops-vms-prd     prd-vm-web-01   Running
 workshop-gitops-vms-prd     prd-vm-web-02   Running
 ----
 
-If any Application is still `OutOfSync` or `Missing`, re-run the three sync commands from <<Lab environment>> and wait until VMs reach `Running`.
+If any Application is still `OutOfSync` or `Missing`, re-run the three sync commands from <<Demo environment>> and wait until VMs reach `Running`.
 
-== Workshop demonstrations
+== Demo demonstrations
 
 The guide includes four demonstrations. Follow the step-by-step instructions in each demo module.
 
