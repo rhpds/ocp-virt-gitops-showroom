@@ -1,6 +1,6 @@
 ---
 site:
-  title: OpenShift Virtualization GitOps Workshop
+  title: OpenShift Virtualization GitOps Demo
   url: https://github.com/rhpds/ocp-virt-gitops-showroom
   start_page: modules::index.adoc
 
