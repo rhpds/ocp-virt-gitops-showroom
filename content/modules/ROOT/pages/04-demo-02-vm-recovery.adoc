@@ -161,7 +161,7 @@ oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argo
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' &>/dev/null
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}' &>/dev/null
 ----
 
 . Monitor the sync process:

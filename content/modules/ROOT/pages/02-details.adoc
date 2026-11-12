@@ -36,21 +36,21 @@ Sync the development Argo CD Application:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 Sync the homologation Argo CD Application:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 Sync the production Argo CD Application:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 Confirm all Applications report `Synced` and `Healthy`:
