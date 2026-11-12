@@ -309,7 +309,7 @@ cd -
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 . Monitor application status until drift is detected:
@@ -327,7 +327,7 @@ oc get applications workshop-gitops-vms-dev -n openshift-gitops -o jsonpath='{.s
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 . Monitor sync progress:

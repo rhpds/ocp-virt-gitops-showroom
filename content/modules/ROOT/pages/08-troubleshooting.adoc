@@ -92,7 +92,7 @@ Force sync of the development Application:
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
+oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge --patch '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
 ----
 
 === Repository access issues
