@@ -309,7 +309,7 @@ cd -
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-dev -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
+oc annotate applications workshop-gitops-vms-dev -n openshift-gitops argocd.argoproj.io/refresh=hard --overwrite
 ----
 
 . Monitor application status until drift is detected:
