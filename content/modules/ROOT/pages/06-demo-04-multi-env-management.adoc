@@ -171,7 +171,7 @@ git push origin vms-hml
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
+oc patch applications workshop-gitops-vms-hml -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}' 
 ----
 
 . Verify the VM was created in homologation:
@@ -211,7 +211,7 @@ git push origin vms-prd
 
 [source,role="execute"]
 ----
-oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}' 
+oc patch applications workshop-gitops-vms-prd -n openshift-gitops --type merge -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}' 
 ----
 
 . Verify the VM was created in production:
