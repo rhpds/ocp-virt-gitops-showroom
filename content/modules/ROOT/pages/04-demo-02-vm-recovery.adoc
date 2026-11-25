@@ -73,11 +73,11 @@ associated storage
 
 === Step 2: Simulate Data Corruption Scenario
 
-. Access the VM over SSH and destroy the filesystem:
+. Access the VM over SSH and destroy the filesystem. When prompted, accept the host key and enter the `cloud-user` password `redhat123`:
 
 [source,role="execute"]
 ----
-virtctl ssh cloud-user@dev-vm-web-02 -n workshop-gitops-vms-dev -c "sudo rm -rf /*"
+virtctl ssh cloud-user@vm/dev-vm-web-02 -n workshop-gitops-vms-dev -c "sudo rm -rf /*"
 ----
 
 . Stop the VM:

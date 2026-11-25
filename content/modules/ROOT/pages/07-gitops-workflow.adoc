@@ -98,18 +98,18 @@ Then sync `workshop-gitops-vms-prd`.
 
 == SSH access to VMs
 
-VMs are automatically configured with SSH key access. Open an SSH session to a VM (replace `<vm-name>`):
+VMs are configured by cloud-init to accept SSH password authentication for `cloud-user` (password `redhat123`). Open an SSH session to a VM (replace `<vm-name>` and `<namespace>`). The `vm/` prefix before the VM name is required:
 
 [source,role="execute"]
 ----
-virtctl ssh cloud-user@<vm-name>
+virtctl ssh cloud-user@vm/<vm-name> -n <namespace>
 ----
 
 Example for the development web VM:
 
 [source,role="execute"]
 ----
-virtctl ssh cloud-user@dev-vm-web-01 -n workshop-gitops-vms-dev
+virtctl ssh cloud-user@vm/dev-vm-web-01 -n workshop-gitops-vms-dev
 ----
 
 == Service verification
